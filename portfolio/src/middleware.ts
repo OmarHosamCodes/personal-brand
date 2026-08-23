@@ -15,10 +15,12 @@ const SITE = 'https://omarhosamcodes.com';
 function contentSecurityPolicy(): string {
   const scriptSrc = ["'self'", "'unsafe-inline'"];
   const connectSrc = ["'self'"];
+  const frameSrc = ["'self'"];
   // ponytail: Vercel injects vercel.live toolbar on hosted deploys only.
   if (import.meta.env.VERCEL) {
     scriptSrc.push('https://vercel.live');
     connectSrc.push('https://vercel.live');
+    frameSrc.push('https://vercel.live');
   }
 
   return [
@@ -29,7 +31,7 @@ function contentSecurityPolicy(): string {
     "img-src 'self' data:",
     "font-src 'self'",
     `connect-src ${connectSrc.join(' ')}`,
-    "frame-src 'self'",
+    `frame-src ${frameSrc.join(' ')}`,
     "form-action 'self'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
