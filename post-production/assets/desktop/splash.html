@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Omar Hosam — Post-Production</title>
+  <style>
+    @font-face {
+      font-family: "Syne";
+      src: url("./fonts/Syne.ttf") format("truetype");
+      font-display: swap;
+    }
+    :root {
+      --code: #070707;
+      --surface: #f5f5f5;
+      --muted: oklch(72% 0.006 89.9);
+      --accent: oklch(61.7% 0.205 37.4);
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--code);
+      color: var(--surface);
+      font-family: "Syne", "Avenir Next", sans-serif;
+      overflow: hidden;
+    }
+    .splash {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+    .lockup {
+      display: grid;
+      justify-items: center;
+      gap: 28px;
+      text-align: center;
+    }
+    .mark {
+      width: min(160px, 28vw);
+      color: var(--surface);
+      overflow: visible;
+    }
+    .mark-piece { opacity: 0; filter: blur(8px); }
+    .is-playing .mark-piece { animation: mark-sequence 550ms var(--ease) both; }
+    .is-playing .mark-piece:nth-child(2) { animation-delay: 80ms; }
+    .is-playing .mark-piece:nth-child(3) { animation-delay: 160ms; }
+    .copy { opacity: 0; transform: translateY(14px); }
+    .is-playing .copy { animation: copy-in 320ms var(--ease) 400ms both; }
+    .name {
+      margin: 0;
+      font: 600 clamp(28px, 5vw, 44px)/1 var(--font-display, Syne, sans-serif);
+      letter-spacing: -0.03em;
+    }
+    .role {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font: 500 12px/1.2 "IBM Plex Mono", Consolas, monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .bar {
+      width: min(220px, 50vw);
+      height: 3px;
+      margin-top: 8px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+    }
+    .is-playing .bar > i { animation: load 1.6s var(--ease) 0.55s both; }
+    @keyframes mark-sequence {
+      0% { opacity: 0; filter: blur(8px); }
+      58%, 100% { opacity: 1; filter: blur(0); }
+    }
+    @keyframes copy-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes load {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mark-piece, .copy { opacity: 1; filter: none; transform: none; animation: none !important; }
+      .bar > i { width: 100%; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="splash is-playing" aria-label="Omar Hosam splash">
+    <div class="lockup">
+      <svg class="mark" viewBox="0 0 48 48" role="img" aria-label="Omar Hosam mark">
+        <circle class="mark-piece" cx="8" cy="32" r="6" fill="currentColor" />
+        <line class="mark-piece" x1="16" y1="46" x2="28" y2="18" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" />
+        <line class="mark-piece" x1="28" y1="46" x2="40" y2="18" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" />
+      </svg>
+      <div class="copy">
+        <p class="name">Omar Hosam</p>
+        <p class="role">Post-production</p>
+      </div>
+      <div class="bar" aria-hidden="true"><i></i></div>
+    </div>
+  </main>
+  <script>
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const delay = reduce ? 200 : 1900;
+    setTimeout(() => {
+      location.replace("/app/");
+    }, delay);
+  </script>
+</body>
+</html>

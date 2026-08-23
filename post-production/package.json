@@ -1,0 +1,19 @@
+{
+  "name": "omar-post-production",
+  "private": true,
+  "workspaces": [
+    "server",
+    "ui"
+  ],
+  "scripts": {
+    "dev": "bun run scripts/dev.ts",
+    "dev:server": "bun run --cwd server dev",
+    "dev:ui": "bun run --cwd ui dev",
+    "build": "bun run --cwd ui build",
+    "self-check": "bun run --cwd server self-check",
+    "process": "bun run --cwd server process",
+    "assets": "bun run scripts/generate-assets.ts",
+    "install:linux": "bash scripts/install-linux.sh",
+    "desktop": "OMAR_POST_OPEN=1 bun run --cwd server start"
+  }
+}

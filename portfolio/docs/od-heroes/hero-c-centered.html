@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Omar Hosam | Centered lockup hero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=Syne:wght@600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: oklch(13% 0.005 264);
+      --surface: oklch(17% 0.006 264);
+      --fg: oklch(95% 0.008 264);
+      --muted: oklch(68% 0.012 264);
+      --border: oklch(27% 0.008 264);
+      --accent: oklch(61.734% 0.20471 37.416);
+      --font-display: "Syne", "Avenir Next", sans-serif;
+      --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+      --pad: clamp(1.25rem, 4vw, 4.5rem);
+    }
+    * { box-sizing: border-box; }
+    html, body { min-width: 320px; min-height: 100%; background: var(--bg); }
+    body { margin: 0; color: var(--fg); font-family: var(--font-body); }
+    button, a { font: inherit; }
+    .hero { min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+    .masthead { min-height: 5.25rem; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pad); border-bottom: 1px solid var(--border); }
+    .mark { display: inline-flex; align-items: center; gap: .55rem; color: var(--fg); text-decoration: none; }
+    .terminal, .location, .role, .offers li { font-family: var(--font-mono); }
+    .terminal, .location, .role { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+    .slashes { display: inline-flex; gap: .16rem; }
+    .slashes i { display: block; width: .22rem; height: 1.2rem; background: var(--accent); transform: rotate(24deg); }
+    .slashes i + i { transform: translateY(-.14rem) rotate(24deg); }
+    .location { color: var(--muted); }
+    .lockup { position: relative; z-index: 1; display: grid; justify-items: center; padding: clamp(3rem, 7vh, 5.5rem) var(--pad) 0; text-align: center; }
+    .role { margin: 0 0 1.1rem; color: var(--muted); line-height: 1.5; }
+    h1 { margin: 0; font-family: var(--font-display); font-size: clamp(4.3rem, 9.8vw, 10rem); font-weight: 700; line-height: .86; letter-spacing: -.04em; text-wrap: balance; }
+    .statement { max-width: 40rem; margin: 1.55rem 0 0; color: oklch(87% 0.008 264); font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.55; text-wrap: balance; }
+    .offers { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem; margin: 1.35rem 0 0; padding: 0; list-style: none; }
+    .offers li { min-height: 2rem; display: inline-flex; align-items: center; padding: .4rem .68rem; border: 1px solid oklch(95% 0.008 264 / .16); color: var(--fg); font-size: .72rem; letter-spacing: .03em; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; margin-top: 1.75rem; }
+    .button { min-height: 3.25rem; display: inline-flex; align-items: center; justify-content: center; padding: .8rem 1.2rem; border: 1px solid transparent; border-radius: .18rem; font-weight: 600; letter-spacing: .02em; cursor: pointer; transition: background-color 160ms cubic-bezier(.23,1,.32,1), color 160ms cubic-bezier(.23,1,.32,1), border-color 160ms cubic-bezier(.23,1,.32,1), transform 160ms cubic-bezier(.23,1,.32,1); }
+    .button:active { transform: translateY(2px); }
+    .primary { background: var(--accent); color: var(--bg); }
+    .primary:hover { background: oklch(68% 0.20471 37.416); }
+    .secondary { background: transparent; border-color: oklch(95% 0.008 264 / .3); color: var(--fg); }
+    .secondary:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+    .button:focus-visible, .mark:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
+    .status { min-height: 1.25rem; margin: .8rem 0 0; color: var(--muted); font-family: var(--font-mono); font-size: .7rem; letter-spacing: .02em; }
+    .portrait-stage { position: relative; flex: 1; width: min(100%, 62rem); min-height: 22rem; margin: .4rem auto 0; overflow: hidden; border-inline: 1px solid var(--border); }
+    .portrait-stage::before { content: ""; position: absolute; z-index: 1; inset: 0; box-shadow: inset 0 4rem 5rem var(--bg); pointer-events: none; }
+    .portrait { width: 100%; height: 100%; min-height: 27rem; max-height: 44rem; object-fit: cover; object-position: center 11%; filter: saturate(.82) contrast(1.08); }
+    @media (max-height: 830px) and (min-width: 721px) {
+      .lockup { padding-top: 2.5rem; }
+      h1 { font-size: clamp(4.3rem, 8vw, 7rem); }
+      .statement { margin-top: 1.15rem; }
+      .offers { margin-top: 1rem; }
+      .actions { margin-top: 1.25rem; }
+      .portrait-stage { min-height: 15rem; }
+    }
+    @media (max-width: 720px) {
+      .masthead { min-height: 4.5rem; }
+      .location { font-size: .65rem; }
+      .lockup { padding-top: 3.25rem; }
+      h1 { font-size: clamp(4rem, 20vw, 6.5rem); max-width: 8ch; }
+      .statement { max-width: 34rem; }
+      .actions { width: 100%; align-items: stretch; }
+      .button { flex: 1 1 12rem; }
+      .portrait-stage { width: 100%; min-height: 20rem; border-inline: 0; border-top: 1px solid var(--border); }
+      .portrait { min-height: 24rem; height: 42svh; }
+    }
+    @media (prefers-reduced-motion: reduce) { .button { transition: none; } }
+  </style>
+</head>
+<body>
+  <main class="hero" data-od-id="hero-centered">
+    <header class="masthead" data-od-id="hero-masthead">
+      <a class="mark" href="#hero-centered" data-od-id="omar-mark" aria-label="Omar Hosam, Creator Broadcast Pipeline">
+        <span class="terminal">OH://CBP</span><span class="slashes" aria-hidden="true"><i></i><i></i></span>
+      </a>
+      <span class="location" data-od-id="location">Cairo, Egypt</span>
+    </header>
+    <section class="lockup" data-od-id="hero-content">
+      <p class="role" data-od-id="hero-title">Senior Full-Stack Software Engineer</p>
+      <h1 data-od-id="hero-name">Omar Hosam</h1>
+      <p class="statement" data-od-id="hero-statement">I build product interfaces, APIs, and commerce systems founders can ship and extend.</p>
+      <ul class="offers" data-od-id="offer-chips" aria-label="Services">
+        <li data-od-id="offer-freelance">Freelance</li><li data-od-id="offer-consultation">Consultation</li><li data-od-id="offer-training">Training</li>
+      </ul>
+      <div class="actions" data-od-id="hero-actions">
+        <button class="button primary" type="button" data-action="consult" data-od-id="cta-book">Book a consult</button>
+        <button class="button secondary" type="button" data-action="work" data-od-id="cta-work">See selected work</button>
+      </div>
+      <p class="status" id="hero-status-c" role="status" aria-live="polite"></p>
+    </section>
+    <figure class="portrait-stage" data-od-id="portrait-region">
+      <img class="portrait" data-od-id="hero-portrait" src="assets/omar-studio-placeholder.svg" alt="Tall dark studio portrait placeholder of Omar Hosam standing arms crossed on black, with a photographic blue rim light.">
+    </figure>
+  </main>
+  <script>
+    document.querySelectorAll('[data-action]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.getElementById('hero-status-c').textContent = button.dataset.action === 'consult'
+          ? 'Consultation booking destination is ready to connect.'
+          : 'Selected work destination is ready to connect.';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { ThemeShowcase } from '../components/ThemeShowcase';
+---
+
+<Layout
+  title="Omar Hosam — Design system"
+  description="shadcn theme verification for the Creator Broadcast Pipeline."
+  noindex
+>
+  <SiteHeader />
+  <main id="main" class="mx-auto max-w-5xl space-y-10 px-5 py-12 md:px-8 md:py-16">
+    <header class="max-w-2xl space-y-4">
+      <p class="font-label text-muted-foreground m-0">Internal</p>
+      <h1 class="font-display m-0 text-[clamp(2.25rem,7vw,4rem)] font-semibold tracking-[-0.03em]">
+        Design system
+      </h1>
+      <p class="m-0 max-w-[55ch] text-[15px] leading-[1.55] text-muted-foreground">
+        Dark shadcn primitives themed from the Omar Hosam Open Design
+        system. Tokens and components only — marketing page lives at home.
+      </p>
+    </header>
+    <ThemeShowcase client:load />
+  </main>
+</Layout>

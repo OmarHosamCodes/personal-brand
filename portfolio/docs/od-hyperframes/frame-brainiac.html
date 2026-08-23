@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orch — product tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: oklch(0 0 0);
+      --foreground: oklch(1 0 0);
+      --card: oklch(0.14 0 0);
+      --secondary: oklch(0.25 0 0);
+      --muted: oklch(0.23 0 0);
+      --muted-foreground: oklch(0.72 0 0);
+      --border: oklch(0.26 0 0);
+      --input: oklch(0.32 0 0);
+      --violet: oklch(0.58 0.21 260.84);
+      --violet-soft: oklch(0.22 0.06 264);
+      --success: oklch(0.72 0.17 145);
+      --error: oklch(0.69 0.2 23.91);
+      --font-sans: "Poppins", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+      --ease-rail: cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: oklch(0.08 0 0); }
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--foreground);
+      font-family: var(--font-sans);
+    }
+    button { font: inherit; }
+    svg { display: block; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .stage-viewport, .stage, .stage * { pointer-events: none !important; }
+    .stage-viewport {
+      position: relative;
+      width: min(100vw, 100svh, 640px);
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--background);
+      box-shadow: 0 18px 52px rgba(0,0,0,.12);
+    }
+    .stage {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 640px;
+      height: 640px;
+      overflow: hidden;
+      background: var(--background);
+      transform-origin: top left;
+      isolation: isolate;
+    }
+    .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--background); }
+    .scene-canvas { visibility: visible; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* Shared product shell */
+    .app-shell { height: 100%; display: grid; grid-template-columns: 52px 1fr; grid-template-rows: 44px 1fr; background: var(--background); }
+    .rail {
+      grid-row: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 52px;
+      padding: 10px 8px;
+      border-inline-end: 1px solid var(--border);
+      background: oklch(0.18 0 0);
+      z-index: 5;
+    }
+    .orch-mark { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: oklch(1 0 0 / .1); color: var(--foreground); font-size: 12px; font-weight: 600; letter-spacing: -.04em; }
+    .rail-nav { display: grid; gap: 6px; margin-top: 14px; }
+    .rail-button { position: relative; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; color: var(--muted-foreground); font-size: 16px; }
+    .rail-button.active { color: var(--foreground); background: oklch(0.32 0 0); }
+    .rail-button svg { position: relative; z-index: 1; }
+    .rail-bottom { display: grid; gap: 7px; margin-top: auto; }
+    .shell-avatar { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: var(--secondary); color: var(--foreground); font-size: 9px; font-weight: 600; }
+    .topbar { grid-column: 2; height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-bottom: 1px solid var(--border); background: var(--background); z-index: 4; }
+    .collapse { width: 28px; height: 28px; display: grid; place-items: center; color: var(--muted-foreground); font-size: 14px; }
+    .crumb { display: flex; align-items: center; gap: 7px; min-width: 0; color: var(--muted-foreground); font-size: 12px; }
+    .crumb strong { color: var(--foreground); font-weight: 600; }
+    .topbar-spacer { flex: 1; }
+    .inbox { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: var(--muted-foreground); font-size: 14px; }
+    .shell-main { grid-column: 2; min-width: 0; min-height: 0; position: relative; overflow: hidden; }
+
+    /* Canvas */
+    .canvas-surface {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background-color: var(--background);
+      background-image: radial-gradient(circle, oklch(0.32 0 0 / .55) 1px, transparent 1.15px);
+      background-size: 22px 22px;
+    }
+    .canvas-plane { position: absolute; inset: -42px; transform-origin: center; }
+    .edge { position: absolute; height: 1px; background: oklch(0.32 0 0); transform-origin: left center; z-index: 1; }
+    .edge::after { content: ""; position: absolute; right: -2px; top: -2px; width: 5px; height: 5px; border-radius: 50%; background: var(--violet); }
+    .edge-a { width: 164px; left: 244px; top: 206px; transform: rotate(18deg); }
+    .edge-b { width: 143px; left: 326px; top: 333px; transform: rotate(-22deg); }
+    .node {
+      position: absolute;
+      z-index: 2;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: 0 1px 2px rgba(0,0,0,.35);
+      transform-origin: center;
+    }
+    .node-focus { left: 178px; top: 134px; width: 250px; height: 178px; box-shadow: 0 0 0 2px oklch(1 0 0 / .4); }
+    .node-small-a { left: 430px; top: 235px; width: 132px; height: 104px; }
+    .node-small-b { left: 275px; top: 366px; width: 148px; height: 108px; }
+    .node-bar { height: 31px; display: flex; align-items: center; gap: 7px; padding: 0 10px; border-bottom: 1px solid var(--border); background: var(--muted); }
+    .node-kind { color: var(--muted-foreground); font-size: 8px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+    .node-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 9px; font-weight: 600; }
+    .node-menu { margin-inline-start: auto; color: var(--muted-foreground); font-size: 12px; }
+    .node-body { padding: 12px; }
+    .node-body h2, .node-body h3 { margin: 0; letter-spacing: -.02em; }
+    .node-body h2 { font-size: 16px; line-height: 1.2; }
+    .node-body h3 { font-size: 11px; }
+    .node-body p { margin: 7px 0 0; color: var(--muted-foreground); font-size: 9px; line-height: 1.5; }
+    .node-detail { margin-top: 11px; padding: 9px; border-radius: 10px; background: var(--muted); }
+    .node-detail span { display: block; color: var(--muted-foreground); font: 7px/1.2 var(--font-mono); }
+    .node-detail strong { display: block; margin-top: 4px; font-size: 9px; }
+    .node-footer { display: flex; align-items: center; gap: 7px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 7px; }
+    .progress-thread { width: 31px; height: 3px; overflow: hidden; border-radius: 999px; background: var(--secondary); }
+    .progress-thread i { display: block; width: 64%; height: 100%; background: var(--foreground); }
+    .minimap { position: absolute; right: 14px; bottom: 15px; z-index: 3; width: 92px; height: 64px; border: 1px solid var(--border); border-radius: 10px; background: oklch(0.1 0 0); overflow: hidden; }
+    .minimap i { position: absolute; border-radius: 3px; background: oklch(0.58 0.21 260.84 / .45); }
+    .minimap .m1 { left: 14px; top: 16px; width: 28px; height: 18px; }
+    .minimap .m2 { left: 48px; top: 28px; width: 18px; height: 14px; }
+    .minimap .m3 { left: 28px; top: 40px; width: 20px; height: 12px; }
+    .zoom-control { position: absolute; left: 14px; bottom: 15px; z-index: 3; display: flex; align-items: center; gap: 2px; padding: 4px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); color: var(--muted-foreground); font: 8px/1 var(--font-mono); }
+    .zoom-control span { min-width: 31px; text-align: center; }
+    .zoom-control i { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px; font-style: normal; }
+    .agent-pill { position: absolute; left: 50%; bottom: 17px; z-index: 4; width: 178px; height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--card); box-shadow: 0 2px 8px rgba(0,0,0,.45); transform: translateX(-50%); color: var(--muted-foreground); font-size: 9px; }
+    .orch-presence { width: 7px; height: 7px; border-radius: 50%; background: var(--foreground); }
+    .agent-pill kbd { margin-inline-start: auto; color: var(--muted-foreground); font: 7px/1 var(--font-mono); }
+
+    /* Agent proposal */
+    .agent-canvas .canvas-plane { opacity: .78; }
+    .agent-panel {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      z-index: 8;
+      width: 454px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: 0 8px 22px rgba(0,0,0,.5);
+      transform: translateX(-50%);
+    }
+    .agent-panel-head { height: 35px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-bottom: 1px solid var(--border); background: var(--muted); }
+    .agent-panel-head strong { font-size: 10px; }
+    .agent-panel-head span { margin-inline-start: auto; color: var(--muted-foreground); font-size: 8px; }
+    .agent-work { display: grid; grid-template-columns: 124px 1fr; min-height: 203px; }
+    .trace { padding: 12px 10px; border-inline-end: 1px solid var(--border); background: var(--background); }
+    .trace-title { color: var(--muted-foreground); font: 7px/1.2 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+    .trace-step { position: relative; display: grid; grid-template-columns: 8px 1fr; gap: 7px; margin-top: 12px; color: var(--muted-foreground); font-size: 8px; line-height: 1.35; }
+    .trace-step::before { content: ""; width: 6px; height: 6px; margin-top: 2px; border-radius: 50%; background: var(--border); }
+    .trace-step.live { color: var(--foreground); }
+    .trace-step.live::before { background: var(--foreground); }
+    .proposal { padding: 12px 13px 11px; }
+    .proposal h2 { margin: 0; font-size: 11px; letter-spacing: -.015em; }
+    .proposal > p { margin: 3px 0 0; color: var(--muted-foreground); font-size: 8px; }
+    .change-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 9px; }
+    .change-column { min-width: 0; padding: 9px; border-radius: 10px; background: var(--muted); }
+    .change-column span { color: var(--muted-foreground); font-size: 7px; }
+    .change-column strong { display: block; margin-top: 4px; font-size: 8px; line-height: 1.35; }
+    .proposal-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; }
+    .button { min-height: 29px; display: inline-flex; align-items: center; justify-content: center; padding: 0 11px; border-radius: 11px; font-size: 8px; font-weight: 600; }
+    .button-ghost { color: var(--foreground); background: transparent; border: 0; }
+    .button-primary { min-width: 72px; color: var(--background); background: var(--foreground); border: 1px solid var(--foreground); }
+    .composer { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; min-height: 45px; padding: 7px 10px; border-top: 1px solid var(--border); }
+    .mode-chip { height: 25px; display: inline-flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 9px; background: var(--secondary); font-size: 7px; font-weight: 600; }
+    .composer-text { color: var(--foreground); font-size: 8px; }
+    .send-button { width: 26px; height: 26px; display: grid; place-items: center; border: 0; border-radius: 9px; background: var(--foreground); color: var(--background); font-size: 11px; }
+
+    /* Agency tracker */
+    .agency-main { grid-column: 2; min-width: 0; min-height: 0; padding: 16px; }
+    .agency-layout { height: 100%; display: grid; grid-template-columns: minmax(0,1fr) 190px; gap: 12px; }
+    .tracker-stack { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+    .timer-bar { min-height: 52px; display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+    .timer-copy { color: var(--muted-foreground); font-size: 11px; }
+    .timer-task { color: var(--foreground); font-size: 10px; font-weight: 500; }
+    .timer-value { font: 500 18px/1 var(--font-mono); letter-spacing: -.02em; }
+    .stop-button { height: 36px; padding: 0 12px; display: grid; place-items: center; border-radius: 6px; background: var(--error); color: #fff; font-size: 9px; font-weight: 700; letter-spacing: .06em; }
+    .time-log { flex: 1; min-height: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+    .log-head { height: 38px; display: grid; grid-template-columns: 1fr 96px 72px; align-items: center; padding: 0 12px; border-bottom: 1px solid var(--border); color: var(--muted-foreground); font-size: 7px; }
+    .log-day { height: 30px; display: flex; align-items: center; padding: 0 12px; background: var(--muted); color: var(--muted-foreground); font-size: 7px; font-weight: 600; }
+    .log-row { min-height: 49px; display: grid; grid-template-columns: 1fr 96px 72px; align-items: center; padding: 0 12px; border-bottom: 1px dashed var(--border); }
+    .log-task strong { display: block; font-size: 9px; }
+    .log-task span, .log-row > span { color: var(--muted-foreground); font-size: 7px; }
+    .running-tag { display: inline-flex; align-items: center; gap: 5px; color: var(--foreground); font-size: 7px; font-weight: 600; }
+    .running-tag i { width: 5px; height: 5px; border-radius: 50%; background: var(--foreground); }
+    .task-rail { min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+    .task-rail-head { height: 39px; display: flex; align-items: center; justify-content: space-between; padding: 0 11px; border-bottom: 1px solid var(--border); }
+    .task-rail-head h2 { margin: 0; font-size: 10px; }
+    .task-count { color: var(--muted-foreground); font: 7px/1 var(--font-mono); }
+    .task-filters { display: flex; gap: 5px; padding: 8px 9px; border-bottom: 1px solid var(--border); }
+    .filter { padding: 4px 7px; border: 1px dashed var(--border); border-radius: 999px; color: var(--muted-foreground); font-size: 7px; }
+    .filter.on { border-style: solid; color: var(--foreground); border-color: transparent; background: oklch(1 0 0 / .15); }
+    .task-list { padding: 7px; }
+    .task-row { min-height: 49px; display: grid; grid-template-columns: 23px 1fr auto; align-items: center; gap: 6px; padding: 5px; border-radius: 9px; }
+    .task-row + .task-row { margin-top: 3px; }
+    .task-row.active { background: var(--muted); }
+    .task-check { width: 19px; height: 19px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 6px; color: var(--background); }
+    .task-check svg { width: 10px; height: 10px; opacity: 0; }
+    .task-row.done .task-check { background: var(--foreground); border-color: var(--foreground); }
+    .task-row.done .task-check svg { opacity: 1; }
+    .task-copy { min-width: 0; }
+    .task-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 8px; }
+    .task-copy span { color: var(--muted-foreground); font-size: 6.5px; }
+    .task-row.done .task-copy strong { color: var(--muted-foreground); text-decoration: line-through; }
+    .task-play { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; color: var(--muted-foreground); font-size: 9px; }
+    .collapsed-agent { position: absolute; left: 50%; bottom: 9px; width: 146px; height: 8px; border-radius: 999px; background: color-mix(in oklab, var(--foreground) 35%, transparent); transform: translateX(-50%); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scene { visibility: hidden !important; opacity: 0 !important; transform: none !important; }
+      .scene-canvas { visibility: visible !important; opacity: 1 !important; }
+      .canvas-plane, .node-focus, .node-detail, .edge, .agent-panel, .task-row { transform: none !important; clip-path: none !important; }
+    }
+  </style>
+</head>
+<body><!--
+  THESIS: Orch is a workspace that turns conversation into inspectable spatial change, refusing the glowing AI side-chat pattern.
+  OWN-WORLD: Cool zinc paper, opaque connected chrome, soft squircle controls, hairline depth, and Operator Violet only for selection and running state.
+  STORY: The board organizes knowledge, the agent proposes a concrete mutation, and Agency carries the same work into time and task execution.
+  FIRST VIEWPORT: A sparse canvas fills the square, three linked nodes sit on a dotted plane, and one decision-bearing node expands above a quiet bottom agent capsule.
+  FORM: Product-native continuous instrument, directly shaped from the supplied three-beat sequence. Seed key: orch-quiet-instrument.
+  FINISH: the single-file artifact is complete only after static structure, motion, reduced-motion, and content checks pass.
+-->
+  <div class="stage-viewport" id="stage-viewport">
+    <div class="stage" id="stage" data-duration="13.1" data-od-id="orch-product-tour" aria-label="Orch Canvas, agent proposal, and Agency tracker product tour">
+      <svg class="sr-only" aria-hidden="true">
+        <defs>
+          <symbol id="i-canvas" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="m10 7 4 10"/></symbol>
+          <symbol id="i-agency" viewBox="0 0 24 24"><path d="M4 20h16M6 20V8h12v12M9 8V4h6v4M9 12h2M13 12h2M9 16h2M13 16h2"/></symbol>
+          <symbol id="i-library" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></symbol>
+          <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.97 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.08A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06A1.7 1.7 0 0 0 8.97 4.6 1.7 1.7 0 0 0 10 3.04V3h4v.08A1.7 1.7 0 0 0 15.03 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 7l-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.96 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15Z"/></symbol>
+          <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+          <symbol id="i-select" viewBox="0 0 24 24"><path d="m5 3 14 8-6 2-2 6L5 3Z"/></symbol>
+          <symbol id="i-note" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6V3Z"/><path d="M15 3v4h4M9 11h6M9 15h6"/></symbol>
+          <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></symbol>
+          <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+          <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+          <symbol id="i-report" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></symbol>
+          <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+          <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+          <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></symbol>
+          <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+        </defs>
+      </svg>
+
+      <p class="sr-only">Knowledge work sprawls across docs and ops tools without a shared spatial model.</p>
+      <p class="sr-only">Stack: React, Hono, oRPC, PostgreSQL.</p>
+      <p class="sr-only">Outcome: Canvas, agency ops, and embedded agent in one workspace.</p>
+
+      <!-- frame:1 duration:4200 transition:push-fade -->
+      <section class="scene scene-canvas" data-scene="canvas" data-od-id="canvas-scene" aria-label="Canvas with expanded workspace node">
+        <div class="app-shell">
+          <aside class="rail">
+            <span class="orch-mark">O</span>
+            <nav class="rail-nav" aria-label="Product areas"><span class="rail-button active"><svg><use href="#i-canvas"/></svg></span><span class="rail-button"><svg><use href="#i-agency"/></svg></span></nav>
+            <div class="rail-bottom"><span class="shell-avatar">OH</span></div>
+          </aside>
+          <header class="topbar"><span class="collapse"><svg><use href="#i-panel"/></svg></span><div class="crumb"><strong>Canvas</strong></div><span class="topbar-spacer"></span><span class="inbox"><svg><use href="#i-bell"/></svg></span></header>
+          <main class="shell-main">
+            <div class="canvas-surface">
+              <div class="canvas-plane">
+                <i class="edge edge-a"></i><i class="edge edge-b"></i>
+                <article class="node node-focus" data-od-id="expanded-canvas-node">
+                  <header class="node-bar"><span class="node-kind">Orchestrator</span><strong class="node-title">Launch brief</strong><span class="node-menu"><svg><use href="#i-more"/></svg></span></header>
+                  <div class="node-body"><h2>Launch brief</h2><p>A single place for scope, decisions, and handoff notes.</p><div class="node-detail"><span>2 BLKS</span><strong>Define the release criteria before implementation starts.</strong></div><div class="node-footer"><span class="progress-thread"><i></i></span><span>Ready to coordinate</span></div></div>
+                </article>
+                <article class="node node-small-a"><header class="node-bar"><span class="node-kind">Note</span><strong class="node-title">Research notes</strong></header><div class="node-body"><h3>Research notes</h3><p>Questions, source links, and open threads.</p></div></article>
+                <article class="node node-small-b"><header class="node-bar"><span class="node-kind">Decision</span><strong class="node-title">Decision log</strong></header><div class="node-body"><h3>Decision log</h3><p>Approved choices and follow-ups.</p></div></article>
+              </div>
+              <div class="zoom-control"><i>+</i><span>92%</span><i>−</i></div>
+              <div class="minimap" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div>
+              <div class="agent-pill"><i class="orch-presence"></i><span>Message Orch</span></div>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      <!-- frame:2 duration:4400 transition:push-fade -->
+      <section class="scene scene-agent" data-scene="agent" data-od-id="agent-proposal-scene" aria-label="Embedded agent streaming a workspace proposal">
+        <div class="app-shell">
+          <aside class="rail"><span class="orch-mark">O</span><nav class="rail-nav"><span class="rail-button active"><svg><use href="#i-canvas"/></svg></span><span class="rail-button"><svg><use href="#i-agency"/></svg></span></nav><div class="rail-bottom"><span class="shell-avatar">OH</span></div></aside>
+          <header class="topbar"><span class="collapse"><svg><use href="#i-panel"/></svg></span><div class="crumb"><strong>Canvas</strong></div><span class="topbar-spacer"></span><span class="inbox"><svg><use href="#i-bell"/></svg></span></header>
+          <main class="shell-main agent-canvas">
+            <div class="canvas-surface">
+              <div class="canvas-plane"><i class="edge edge-a"></i><i class="edge edge-b"></i><article class="node node-focus"><header class="node-bar"><span class="node-kind">Orchestrator</span><strong class="node-title">Launch brief</strong></header><div class="node-body"><h2>Launch brief</h2><p>A single place for scope, decisions, and handoff notes.</p><div class="node-detail"><span>SELECTED SCOPE</span><strong>Release criteria and decision notes</strong></div></div></article><article class="node node-small-a"><header class="node-bar"><span class="node-kind">Note</span><strong class="node-title">Research notes</strong></header></article><article class="node node-small-b"><header class="node-bar"><span class="node-kind">Decision</span><strong class="node-title">Decision log</strong></header></article></div>
+              <aside class="agent-panel" data-od-id="agent-proposal-card">
+                <header class="agent-panel-head"><i class="orch-presence"></i><strong>Orch</strong><span>Agent mode</span></header>
+                <div class="agent-work"><div class="trace"><div class="trace-title">Work trace</div><div class="trace-step trace-read">Read selected node</div><div class="trace-step trace-draft live">Draft workspace change</div><div class="trace-step trace-wait">Wait for approval</div></div><div class="proposal"><h2>Move launch criteria into Decision log</h2><p>Review the change, then approve or reject.</p><div class="change-grid"><div class="change-column"><span>Before</span><strong>Criteria live inside the launch brief.</strong></div><div class="change-column"><span>After</span><strong>Linked decision in the Decision log.</strong></div></div><div class="proposal-actions"><button class="button button-ghost" type="button">Reject</button><button class="button button-primary" type="button">Approve</button></div></div></div>
+                <div class="composer"><span class="mode-chip"><svg><use href="#i-canvas"/></svg>Agent</span><span class="composer-text">Organize the launch criteria.</span><button class="send-button" type="button"><svg><use href="#i-send"/></svg></button></div>
+              </aside>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      <!-- frame:3 duration:4500 transition:push-fade -->
+      <section class="scene scene-agency" data-scene="agency" data-od-id="agency-tracker-scene" aria-label="Agency timer and My Tasks rail">
+        <div class="app-shell">
+          <aside class="rail"><span class="orch-mark">O</span><nav class="rail-nav"><span class="rail-button"><svg><use href="#i-canvas"/></svg></span><span class="rail-button active"><svg><use href="#i-agency"/></svg></span></nav><div class="rail-bottom"><span class="shell-avatar">OH</span></div></aside>
+          <header class="topbar"><span class="collapse"><svg><use href="#i-panel"/></svg></span><div class="crumb"><span>Agency</span><span>›</span><strong>Tracker</strong></div><span class="topbar-spacer"></span><span class="inbox"><svg><use href="#i-bell"/></svg></span></header>
+          <main class="agency-main">
+            <div class="agency-layout">
+              <div class="tracker-stack">
+                <section class="timer-bar" data-od-id="agency-timer-bar"><span class="timer-copy">Design QA</span><span class="timer-task">Design QA-client</span><time class="timer-value">00:18:24</time><span class="stop-button">STOP</span></section>
+                <section class="time-log"><header class="log-head"><span>Task</span><span>Project</span><span>Time</span></header><div class="log-day">Today</div><div class="log-row"><div class="log-task"><strong>Design QA</strong><span class="running-tag"><i></i>Running</span></div><span>Client portal</span><span>—</span></div><div class="log-row"><div class="log-task"><strong>Review handoff notes</strong><span>Assigned work</span></div><span>Launch</span><span>—</span></div><div class="log-row"><div class="log-task"><strong>Update component states</strong><span>Assigned work</span></div><span>Design system</span><span>—</span></div></section>
+              </div>
+              <aside class="task-rail" data-od-id="my-tasks-rail"><header class="task-rail-head"><h2>My Tasks</h2><span class="task-count">OPEN</span></header><div class="task-filters"><span class="filter on">Open</span><span class="filter">Done</span><span class="filter">Delegated</span></div><div class="task-list"><article class="task-row active"><span class="task-check"><svg><use href="#i-check"/></svg></span><div class="task-copy"><strong>Design QA</strong><span>Client portal</span></div><span class="task-play"><svg><use href="#i-play"/></svg></span></article><article class="task-row task-complete"><span class="task-check"><svg><use href="#i-check"/></svg></span><div class="task-copy"><strong>Review launch criteria</strong><span>Launch</span></div><span class="task-play"><svg><use href="#i-play"/></svg></span></article><article class="task-row"><span class="task-check"><svg><use href="#i-check"/></svg></span><div class="task-copy"><strong>Prepare handoff</strong><span>Client portal</span></div><span class="task-play"><svg><use href="#i-play"/></svg></span></article></div></aside>
+            </div>
+            <div class="collapsed-agent" aria-label="Collapsed Orch agent dock"></div>
+          </main>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const viewport = document.getElementById("stage-viewport");
+      const stage = document.getElementById("stage");
+      const fit = () => { stage.style.transform = `scale(${viewport.clientWidth / 640})`; };
+      fit();
+      window.addEventListener("resize", fit, { passive: true });
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const scenes = gsap.utils.toArray(".scene");
+      const showOnly = (active) => scenes.forEach((scene) => scene.setAttribute("aria-hidden", scene !== active ? "true" : "false"));
+
+      if (reduce) {
+        gsap.globalTimeline.clear();
+        gsap.set(scenes, { autoAlpha: 0, xPercent: 0 });
+        gsap.set(".scene-canvas", { autoAlpha: 1 });
+        showOnly(document.querySelector(".scene-canvas"));
+        return;
+      }
+
+      gsap.set(scenes, { autoAlpha: 0, xPercent: 5 });
+      gsap.set(".scene-canvas", { autoAlpha: 1, xPercent: 0 });
+      showOnly(document.querySelector(".scene-canvas"));
+      const activate = (selector) => () => showOnly(document.querySelector(selector));
+      const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power3.inOut" } });
+
+      tl.fromTo(".scene-canvas .canvas-plane", { x: -8, y: 6 }, { x: 5, y: -3, duration: 3.75, ease: "sine.inOut" }, 0)
+        .fromTo(".scene-canvas .node-focus", { width: 208, height: 139, scale: .96 }, { width: 250, height: 178, scale: 1, duration: .72, ease: "power4.out" }, .52)
+        .fromTo(".scene-canvas .node-detail", { clipPath: "inset(0 100% 0 0 round 10px)", autoAlpha: .4 }, { clipPath: "inset(0 0% 0 0 round 10px)", autoAlpha: 1, duration: .62, ease: "power3.out" }, .8)
+        .fromTo(".scene-canvas .edge", { scaleX: 0 }, { scaleX: 1, duration: .55, stagger: .12, ease: "power3.out" }, .96)
+        .to(".scene-canvas", { autoAlpha: 0, xPercent: -5, duration: .58 }, 4.12)
+        .fromTo(".scene-agent", { autoAlpha: 0, xPercent: 6 }, { autoAlpha: 1, xPercent: 0, duration: .64, onStart: activate(".scene-agent") }, 4.12)
+        .fromTo(".agent-panel", { clipPath: "inset(100% 0 0 0 round 16px)", y: 18 }, { clipPath: "inset(0% 0 0 0 round 16px)", y: 0, duration: .72, ease: "power4.out" }, 4.34)
+        .fromTo(".trace-read", { autoAlpha: .2, x: -5 }, { autoAlpha: 1, x: 0, duration: .38, ease: "power3.out" }, 4.72)
+        .fromTo(".trace-draft", { autoAlpha: .2, x: -5 }, { autoAlpha: 1, x: 0, duration: .38, ease: "power3.out" }, 5.18)
+        .fromTo(".change-column", { y: 7, autoAlpha: .25 }, { y: 0, autoAlpha: 1, duration: .42, stagger: .1, ease: "power3.out" }, 5.42)
+        .fromTo(".proposal-actions", { y: 5, autoAlpha: .25 }, { y: 0, autoAlpha: 1, duration: .38, ease: "power3.out" }, 5.88)
+        .fromTo(".trace-wait", { autoAlpha: .2, x: -5 }, { autoAlpha: 1, x: 0, duration: .38, ease: "power3.out" }, 6.12)
+        .to(".scene-agent", { autoAlpha: 0, xPercent: -5, duration: .58 }, 8.52)
+        .fromTo(".scene-agency", { autoAlpha: 0, xPercent: 6 }, { autoAlpha: 1, xPercent: 0, duration: .64, onStart: activate(".scene-agency") }, 8.52)
+        .fromTo(".timer-bar", { y: -9, autoAlpha: .35 }, { y: 0, autoAlpha: 1, duration: .48, ease: "power4.out" }, 8.78)
+        .fromTo(".task-row", { x: 9, autoAlpha: .35 }, { x: 0, autoAlpha: 1, duration: .38, stagger: .07, ease: "power3.out" }, 8.96)
+        .fromTo(".task-complete .task-check", { scale: .76, backgroundColor: "transparent", borderColor: "var(--border)" }, { scale: 1, backgroundColor: "var(--foreground)", borderColor: "var(--foreground)", duration: .36, ease: "back.out(1.45)" }, 10.18)
+        .fromTo(".task-complete .task-check svg", { autoAlpha: 0, scale: .5 }, { autoAlpha: 1, scale: 1, duration: .28, ease: "power3.out" }, 10.26)
+        .fromTo(".task-complete .task-copy strong", { color: "var(--foreground)", textDecoration: "none" }, { color: "var(--muted-foreground)", textDecoration: "line-through", duration: .28, ease: "power3.out" }, 10.2)
+        .to(".scene-agency", { autoAlpha: 0, xPercent: -5, duration: .58 }, 12.48)
+        .fromTo(".scene-canvas", { autoAlpha: 0, xPercent: 6 }, { autoAlpha: 1, xPercent: 0, duration: .62, onStart: activate(".scene-canvas") }, 12.48)
+        .set(".scene-agent, .scene-agency", { autoAlpha: 0, xPercent: 5 }, 13.1);
+    })();
+  </script>
+  <!-- HYPERFRAMES_META: {"duration":13.1,"loop":true,"aspect":"1:1","frames":[{"frame":1,"duration":4.2,"transition":"push-fade","sceneSummary":"Canvas pans across three connected nodes while the launch brief expands"},{"frame":2,"duration":4.4,"transition":"push-fade","sceneSummary":"Embedded agent streams a visible workspace proposal with Approve and Reject"},{"frame":3,"duration":4.5,"transition":"push-fade","sceneSummary":"Agency tracker shows the timer bar and a My Tasks completion tick"}]} -->
+</body>
+</html>

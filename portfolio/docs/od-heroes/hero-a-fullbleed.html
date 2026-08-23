@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Omar Hosam | Full-bleed hero concept</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=Syne:wght@600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: oklch(13% 0.005 264);
+      --surface: oklch(17% 0.006 264);
+      --fg: oklch(95% 0.008 264);
+      --muted: oklch(68% 0.012 264);
+      --border: oklch(27% 0.008 264);
+      --accent: oklch(61.734% 0.20471 37.416);
+      --font-display: "Syne", "Avenir Next", sans-serif;
+      --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+      --page: clamp(1.25rem, 4vw, 4.75rem);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { margin: 0; min-width: 320px; background: var(--bg); color: var(--fg); font-family: var(--font-body); }
+    button, a { font: inherit; }
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
+      background: var(--bg);
+    }
+    .portrait {
+      position: absolute;
+      inset: 0 0 0 auto;
+      z-index: -2;
+      width: min(60vw, 920px);
+      height: 100%;
+      object-fit: cover;
+      object-position: center 16%;
+      filter: saturate(.82) contrast(1.08);
+    }
+    .portrait-shade { display: none; }
+    .masthead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 5.25rem;
+      padding: 0 var(--page);
+      border-bottom: 1px solid oklch(95% 0.008 264 / .1);
+    }
+    .mark { display: inline-flex; align-items: center; gap: .55rem; color: var(--fg); text-decoration: none; }
+    .terminal { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+    .slashes { display: inline-flex; gap: .16rem; }
+    .slashes i { display: block; width: .22rem; height: 1.2rem; background: var(--accent); transform: rotate(24deg); }
+    .slashes i + i { transform: translateY(-.14rem) rotate(24deg); }
+    .location { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .content {
+      display: grid;
+      align-content: center;
+      width: min(100%, 84rem);
+      min-height: calc(100svh - 5.25rem);
+      padding: clamp(3.25rem, 9vh, 7rem) var(--page);
+    }
+    .role { margin: 0 0 1.15rem; font-family: var(--font-mono); font-size: clamp(.72rem, .9vw, .82rem); line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    h1 { margin: 0; max-width: 9ch; font-family: var(--font-display); font-size: clamp(4.3rem, 10vw, 10rem); font-weight: 700; line-height: .84; letter-spacing: -.035em; }
+    .statement { max-width: 42rem; margin: 2rem 0 0; font-size: clamp(1.05rem, 1.55vw, 1.35rem); line-height: 1.55; color: oklch(88% 0.008 264); text-wrap: balance; }
+    .offers { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+    .offers li { min-height: 2rem; display: inline-flex; align-items: center; padding: .4rem .68rem; border: 1px solid oklch(95% 0.008 264 / .16); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .03em; color: var(--fg); }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; margin-top: 2rem; }
+    .button { min-height: 3.25rem; display: inline-flex; align-items: center; justify-content: center; padding: .8rem 1.2rem; border: 1px solid transparent; border-radius: .18rem; text-decoration: none; font-weight: 600; letter-spacing: .02em; cursor: pointer; transition: background-color 160ms cubic-bezier(.23,1,.32,1), color 160ms cubic-bezier(.23,1,.32,1), border-color 160ms cubic-bezier(.23,1,.32,1), transform 160ms cubic-bezier(.23,1,.32,1); }
+    .button:active { transform: translateY(2px); }
+    .primary { background: var(--accent); color: oklch(13% 0.005 264); }
+    .primary:hover { background: oklch(68% 0.20471 37.416); }
+    .secondary { border-color: oklch(95% 0.008 264 / .3); color: var(--fg); background: oklch(13% 0.005 264 / .74); }
+    .secondary:hover { border-color: var(--fg); background: var(--fg); color: var(--bg); }
+    .button:focus-visible, .mark:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
+    .status { min-height: 1.3rem; margin: 1rem 0 0; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .02em; color: var(--muted); }
+    @media (max-width: 760px) {
+      .hero { min-height: 100svh; display: flex; flex-direction: column; }
+      .masthead { min-height: 4.5rem; }
+      .location { font-size: .65rem; }
+      .portrait { position: relative; order: 2; width: 100%; height: 42svh; min-height: 20rem; object-position: center 14%; border-top: 1px solid var(--border); }
+      .content { order: 1; min-height: auto; padding-block: 3.25rem 2.5rem; }
+      h1 { max-width: 7ch; font-size: clamp(4.2rem, 23vw, 7rem); line-height: .88; }
+      .statement { max-width: 33rem; margin-top: 1.5rem; }
+      .actions { align-items: stretch; }
+      .button { flex: 1 1 12rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { .button { transition: none; } }
+  </style>
+</head>
+<body>
+  <main class="hero" data-od-id="hero-fullbleed">
+    <header class="masthead" data-od-id="hero-masthead">
+      <a class="mark" href="#hero-fullbleed" data-od-id="omar-mark" aria-label="Omar Hosam, Creator Broadcast Pipeline">
+        <span class="terminal">OH://CBP</span><span class="slashes" aria-hidden="true"><i></i><i></i></span>
+      </a>
+      <span class="location" data-od-id="location">Cairo, Egypt</span>
+    </header>
+    <img class="portrait" data-od-id="hero-portrait" src="assets/omar-studio-placeholder.svg" alt="Tall dark studio portrait placeholder of Omar Hosam standing arms crossed on black, with a photographic blue rim light.">
+    <div class="portrait-shade" aria-hidden="true"></div>
+    <section class="content" data-od-id="hero-content">
+      <div>
+        <p class="role" data-od-id="hero-title">Senior Full-Stack Software Engineer</p>
+        <h1 data-od-id="hero-name">Omar<br>Hosam</h1>
+        <p class="statement" data-od-id="hero-statement">I build product interfaces, APIs, and commerce systems founders can ship and extend.</p>
+        <ul class="offers" data-od-id="offer-chips" aria-label="Services">
+          <li data-od-id="offer-freelance">Freelance</li><li data-od-id="offer-consultation">Consultation</li><li data-od-id="offer-training">Training</li>
+        </ul>
+        <div class="actions" data-od-id="hero-actions">
+          <button class="button primary" type="button" data-action="consult" data-od-id="cta-book">Book a consult</button>
+          <button class="button secondary" type="button" data-action="work" data-od-id="cta-work">See selected work</button>
+        </div>
+        <p class="status" id="hero-status-a" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll('[data-action]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.getElementById('hero-status-a').textContent = button.dataset.action === 'consult'
+          ? 'Consultation booking destination is ready to connect.'
+          : 'Selected work destination is ready to connect.';
+      });
+    });
+  </script>
+</body>
+</html>

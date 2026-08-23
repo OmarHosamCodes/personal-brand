@@ -1,0 +1,61 @@
+---
+import ProjectLogo from '../ProjectLogo.astro';
+import { WorkSpotlight } from '../WorkSpotlight';
+import { site } from '../../content/site';
+
+/** Fixed glow anchor per frame — top-left, top, top-right. */
+const spotlightById = {
+  'ogm-reimagined': { x: 22, y: 18 },
+  brainiac: { x: 50, y: 18 },
+  atoms: { x: 78, y: 18 },
+} as const;
+---
+
+<section
+  id="work"
+  class="border-border scroll-mt-28 border-b py-16 md:scroll-mt-16 md:py-20"
+  aria-labelledby="work-heading"
+>
+  <div class="mx-auto max-w-6xl space-y-10 px-5 md:px-8">
+    <div class="max-w-2xl space-y-3">
+      <h2
+        id="work-heading"
+        class="font-display m-0 text-[clamp(1.75rem,3.2vw,2.75rem)] font-semibold tracking-[-0.02em]"
+      >
+        Selected work
+      </h2>
+      <p class="text-muted-foreground m-0 max-w-[55ch] text-[15px] leading-[1.6]">
+        Three products I shipped. Each frame is the real interface.
+      </p>
+    </div>
+    <ul class="m-0 grid list-none gap-8 p-0 lg:grid-cols-3">
+      {
+        site.projects.map((project) => (
+          <li>
+            <article class="border-border bg-card flex h-full flex-col overflow-hidden rounded-[16px] border">
+              <WorkSpotlight
+                client:visible
+                className="border-b border-border"
+                src={project.frame}
+                title={`${project.name} case frame`}
+                x={spotlightById[project.id].x}
+                y={spotlightById[project.id].y}
+              />
+              <div class="flex flex-1 flex-col gap-3 p-5">
+                <div class="flex items-center gap-3">
+                  <ProjectLogo id={project.id} name={project.name} />
+                  <h3 class="font-display m-0 text-[18px] leading-[1.1] font-semibold tracking-[-0.01em]">
+                    {project.name}
+                  </h3>
+                </div>
+                <p class="text-muted-foreground m-0 max-w-[48ch] text-[15px] leading-[1.6]">
+                  {project.line}
+                </p>
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

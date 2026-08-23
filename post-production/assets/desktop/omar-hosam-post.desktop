@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Omar Hosam Post-Production
+GenericName=Video Finishing
+Comment=Denoise, trim silence, and stitch Omar Hosam intro/outro
+Exec=omar-post-production
+Icon=omar-hosam-post
+Terminal=false
+Categories=AudioVideo;Video;AudioVideoEditing;
+Keywords=video;ffmpeg;obs;omar;post;
+StartupWMClass=OmarHosamPost
+StartupNotify=true

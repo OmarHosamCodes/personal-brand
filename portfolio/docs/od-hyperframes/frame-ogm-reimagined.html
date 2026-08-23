@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tribe IT — product tour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #121821;
+      --foreground: #e6e8eb;
+      --card: #172131;
+      --card-strong: #1b2230;
+      --muted: #2a2f3a;
+      --muted-foreground: #aab3c0;
+      --border: #263250;
+      --border-soft: #2c3a52;
+      --primary: #ff6b06;
+      --primary-strong: #e54600;
+      --primary-foreground: #ffffff;
+      --secondary: #5385f7;
+      --secondary-soft: #243149;
+      --sidebar: #1a2436;
+      --sidebar-accent: #243149;
+      --sidebar-border: #2c3a52;
+      --admin-sidebar: #1a2436;
+      --admin-sidebar-fg: #e0e3e7;
+      --admin-sidebar-muted: #aab3c0;
+      --success: #4cb391;
+      --success-soft: #1a3a32;
+      --warning: #ffb829;
+      --warning-soft: #3a2e14;
+      --danger-soft: #3a1f1f;
+      --attention: #2a1c16;
+      --attention-border: #5a3328;
+      --font-sans: "IBM Plex Sans Arabic", "IBM Plex Sans", sans-serif;
+      --font-mono: "Fira Code", ui-monospace, monospace;
+      --radius: 24px;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #0c1016; }
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: var(--font-sans);
+      color: var(--foreground);
+    }
+    button { font: inherit; }
+    svg { display: block; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .stage-viewport, .stage, .stage * { pointer-events: none !important; }
+    .stage-viewport {
+      position: relative;
+      width: min(100vw, 100svh, 640px);
+      aspect-ratio: 1;
+      overflow: hidden;
+      box-shadow: 0 18px 60px rgba(23, 33, 49, .14);
+    }
+    .stage {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 640px;
+      height: 640px;
+      background: var(--background);
+      isolation: isolate;
+      transform-origin: top left;
+    }
+    .scene { position: absolute; inset: 0; overflow: hidden; background: var(--background); visibility: hidden; }
+    .scene-home { visibility: visible; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* Member app shell — Facebook triad: logo+search | centered Spaces | actions */
+    .member-shell { height: 100%; display: grid; grid-template-rows: 56px 1fr; background: var(--background); }
+    .member-topbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 0 14px; border-bottom: 1px solid var(--border); background: var(--background); }
+    .top-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .community-mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; flex: 0 0 32px; }
+    .search { height: 32px; flex: 1; max-width: 196px; display: flex; align-items: center; gap: 7px; padding: 0 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); color: var(--muted-foreground); font-size: 10px; }
+    .search svg { font-size: 13px; }
+    .space-nav { display: flex; align-items: center; gap: 4px; }
+    .space-link { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: var(--muted-foreground); font-size: 20px; }
+    .space-link.active { color: var(--primary); }
+    .space-link.active::before { content: ""; position: absolute; inset: 4px; border-radius: 10px; background: rgba(255,107,6,.10); }
+    .space-link.active::after { content: ""; position: absolute; inset-inline: 8px; bottom: 0; height: 2px; border-radius: 999px; background: var(--primary); }
+    .space-link svg { position: relative; z-index: 1; }
+    .member-actions { display: flex; justify-content: flex-end; align-items: center; gap: 6px; }
+    .icon-button, .avatar { display: grid; place-items: center; border: 0; background: var(--card); }
+    .icon-button { width: 36px; height: 36px; border-radius: 50%; color: var(--muted-foreground); font-size: 16px; }
+    .avatar { border-radius: 50%; font-size: 10px; font-weight: 700; color: #93baf5; background: var(--secondary-soft); }
+    .avatar.sm { width: 36px; height: 36px; }
+    .avatar.md { width: 40px; height: 40px; }
+    .member-body { min-height: 0; display: grid; grid-template-columns: 148px minmax(0, 1fr); }
+    .channel-rail { position: relative; padding: 16px 10px; border-inline-end: 1px solid var(--border); background: var(--background); }
+    .rail-label { margin: 0 8px 10px; color: var(--muted-foreground); font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+    .channel { height: 38px; display: flex; align-items: center; gap: 9px; padding: 0 10px; border-radius: 12px; color: var(--muted-foreground); font-size: 11px; font-weight: 500; }
+    .channel + .channel { margin-top: 4px; }
+    .channel svg { font-size: 13px; }
+    .channel.active { background: rgba(255,107,6,.14); color: var(--primary); font-weight: 600; }
+    .collapse-row { position: absolute; inset-inline-start: 18px; bottom: 17px; color: var(--muted-foreground); font-size: 9px; }
+    .member-main { min-width: 0; overflow: hidden; padding: 18px 22px; }
+    .view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 13px; }
+    .view-head h1 { margin: 0; font-size: 22px; line-height: 1.1; letter-spacing: -.025em; }
+    .view-head p { margin: 4px 0 0; color: var(--muted-foreground); font-size: 10px; }
+    .quiet-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border: 1px solid var(--border); border-radius: 999px; background: var(--card-strong); color: var(--muted-foreground); font-size: 9px; font-weight: 600; }
+    .card { border: 1px solid var(--border); border-radius: 16px; background: var(--card); }
+    .composer { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 10px; padding: 14px; }
+    .composer-field { height: 38px; display: flex; align-items: center; padding: 0 13px; border: 1px solid var(--border); border-radius: 999px; background: var(--muted); color: var(--muted-foreground); font-size: 10px; }
+    .primary-button { min-height: 34px; padding: 0 13px; border: 0; border-radius: 11px; background: var(--primary); color: var(--primary-foreground); font-size: 10px; font-weight: 600; letter-spacing: .02em; }
+    .post { margin-top: 12px; padding: 16px; }
+    .post-head { display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center; }
+    .post-author strong { display: block; font-size: 11px; }
+    .post-author span, .post-time { color: var(--muted-foreground); font-size: 8px; }
+    .post h2 { margin: 13px 0 6px; font-size: 14px; line-height: 1.25; }
+    .post p { margin: 0; max-width: 52ch; color: var(--muted-foreground); font-size: 10px; line-height: 1.5; }
+    .post-actions { display: flex; gap: 15px; margin-top: 14px; padding-top: 11px; border-top: 1px solid var(--border-soft); color: var(--muted-foreground); font-size: 9px; }
+    .post-action { display: inline-flex; align-items: center; gap: 5px; }
+
+    /* Learn */
+    .course-layout { display: grid; grid-template-columns: minmax(0,1fr) 136px; gap: 13px; }
+    .course-card { overflow: hidden; }
+    .course-banner { padding: 17px; border-bottom: 1px solid var(--border); background: var(--card-strong); }
+    .course-kicker { color: var(--primary); font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .course-banner h2 { margin: 5px 0 0; max-width: 18ch; font-size: 18px; line-height: 1.15; letter-spacing: -.02em; }
+    .lesson-list { background: var(--card-strong); }
+    .learn-row { min-height: 55px; display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 9px; padding: 9px 13px; border-bottom: 1px solid var(--border-soft); }
+    .learn-row:last-child { border-bottom: 0; }
+    .lesson-index { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; color: var(--muted-foreground); font: 9px/1 var(--font-mono); }
+    .lesson-copy strong { display: block; font-size: 10px; }
+    .lesson-copy span { color: var(--muted-foreground); font-size: 8px; }
+    .progress-chip { padding: 4px 7px; border: 1px solid rgba(255,107,6,.38); border-radius: 999px; background: rgba(255,107,6,.14); color: var(--primary); font-size: 8px; font-weight: 700; }
+    .lesson-progress { height: 3px; margin: 0 13px 12px 46px; overflow: hidden; border-radius: 999px; background: var(--muted); }
+    .lesson-progress-fill { width: 62%; height: 100%; background: var(--primary); transform-origin: left center; }
+    .course-side { display: grid; align-content: start; gap: 10px; }
+    .side-note { padding: 13px; }
+    .side-note span { color: var(--muted-foreground); font-size: 8px; text-transform: uppercase; letter-spacing: .08em; }
+    .side-note strong { display: block; margin-top: 6px; font-size: 11px; line-height: 1.35; }
+    .relative-bars { display: flex; align-items: flex-end; gap: 5px; height: 52px; margin-top: 11px; }
+    .relative-bars i { flex: 1; border-radius: 4px 4px 2px 2px; background: var(--secondary); opacity: .72; }
+
+    /* Live join lobby — no member chrome, no custom sidebar */
+    .live-shell { height: 100%; display: grid; place-items: center; background: var(--background); }
+    .live-main { position: relative; width: min(420px, 86%); display: flex; flex-direction: column; align-items: flex-start; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); font-size: 10px; }
+    .live-badges { display: flex; gap: 7px; margin-top: 22px; }
+    .live-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 8px; font-weight: 700; letter-spacing: .06em; }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--card); }
+    .watching { color: var(--muted-foreground); font-size: 9px; align-self: center; }
+    .live-main h1 { margin: 14px 0 0; max-width: 16ch; font-size: 32px; line-height: 1.08; letter-spacing: -.035em; }
+    .host { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+    .host-copy span { display: block; color: var(--muted-foreground); font-size: 8px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    .host-copy strong { display: block; margin-top: 2px; font-size: 11px; }
+    .join-note { margin: 22px 0 10px; color: var(--muted-foreground); font-size: 10px; }
+    .join-button { min-width: 168px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+
+    /* Admin Command Center */
+    .admin-shell { height: 100%; display: grid; grid-template-columns: 132px minmax(0,1fr); background: var(--background); font-size: 10px; }
+    .admin-rail { display: flex; flex-direction: column; background: var(--admin-sidebar); color: var(--admin-sidebar-fg); }
+    .admin-brand { height: 54px; display: flex; align-items: center; gap: 8px; padding: 0 13px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .admin-brand .community-mark { width: 28px; height: 28px; }
+    .admin-brand strong { display: block; font-size: 10px; }
+    .admin-brand span { color: var(--admin-sidebar-muted); font-size: 7px; }
+    .admin-rail .command-search { margin: 8px 9px 0; height: 28px; }
+    .admin-nav { padding: 10px 9px; }
+    .admin-nav-label { padding: 8px 8px 4px; color: var(--admin-sidebar-muted); font-size: 7px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .admin-nav-label:first-child { padding-top: 0; }
+    .admin-link { min-height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 8px; border-radius: 8px; color: var(--admin-sidebar-muted); font-size: 9px; }
+    .admin-link + .admin-link { margin-top: 3px; }
+    .admin-link.active { background: rgba(83,133,247,.18); color: #fff; box-shadow: inset 2px 0 0 var(--secondary); }
+    .admin-link svg { font-size: 12px; }
+    .admin-profile { margin-top: auto; padding: 11px; border-top: 1px solid rgba(255,255,255,.08); color: var(--admin-sidebar-muted); font-size: 8px; }
+    .admin-workspace { min-width: 0; }
+    .admin-topbar { height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 15px; border-bottom: 1px solid var(--border); }
+    .breadcrumb { color: var(--muted-foreground); font-size: 8px; }
+    .breadcrumb strong { color: var(--foreground); }
+    .command-search { height: 29px; display: flex; align-items: center; gap: 7px; padding: 0 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--muted-foreground); font-size: 8px; }
+    .command-search span { flex: 1; }
+    .kbd { padding: 2px 5px; border: 1px solid var(--border); border-radius: 4px; background: var(--background); font: 7px/1.4 var(--font-mono); }
+    .admin-actions { display: flex; justify-content: flex-end; }
+    .admin-avatar { width: 27px; height: 27px; }
+    .admin-page { padding: 17px 18px; }
+    .admin-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .admin-eyebrow { margin: 0 0 3px; color: var(--secondary); font-size: 7px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .admin-head h1 { margin: 0; font-size: 25px; line-height: 1.08; letter-spacing: -.03em; }
+    .admin-head p { max-width: 43ch; margin: 4px 0 0; color: var(--muted-foreground); font-size: 8px; line-height: 1.45; }
+    .segment { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--muted); }
+    .segment span { min-width: 26px; padding: 4px 6px; border-radius: 5px; color: var(--muted-foreground); text-align: center; font-size: 7px; }
+    .segment .on { background: var(--card); color: var(--foreground); box-shadow: 0 1px 2px rgba(22,30,43,.08); }
+    .attention-band { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid var(--attention-border); border-radius: 10px; background: var(--attention); }
+    .attention-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; background: #3a241c; color: var(--primary-strong); font-size: 13px; }
+    .attention-band strong { display: block; font-size: 9px; }
+    .attention-band p { margin: 1px 0 0; color: var(--muted-foreground); font-size: 7px; }
+    .review-button { padding: 6px 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--card); font-size: 7px; font-weight: 600; }
+    .metric-strip { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 10px; overflow: hidden; border: 1px solid var(--border); border-radius: 11px; background: var(--card); }
+    .metric { min-width: 0; padding: 10px 12px; border-inline-end: 1px solid var(--border-soft); }
+    .metric:last-child { border-inline-end: 0; }
+    .metric-label { color: var(--muted-foreground); font-size: 7px; }
+    .metric-value { margin-top: 3px; color: var(--muted-foreground); font: 600 19px/1.15 var(--font-mono); }
+    .metric-note { margin-top: 2px; color: var(--muted-foreground); font-size: 6.5px; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 176px; gap: 10px; margin-top: 10px; }
+    .admin-panel { overflow: hidden; border: 1px solid var(--border); border-radius: 11px; background: var(--card); }
+    .panel-head { min-height: 43px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--border-soft); }
+    .panel-head h2 { margin: 0; font-size: 11px; }
+    .panel-head p { margin: 2px 0 0; color: var(--muted-foreground); font-size: 7px; }
+    .activity-bars { height: 107px; display: flex; align-items: flex-end; gap: 7px; padding: 19px 14px 15px; }
+    .bar-group { height: 100%; flex: 1; display: flex; align-items: flex-end; gap: 2px; }
+    .bar-group i { flex: 1; border-radius: 2px 2px 0 0; background: #3a465c; }
+    .bar-group i:last-child { background: var(--secondary); }
+    .queue { padding: 8px; }
+    .queue-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 7px; padding: 9px; border: 1px solid var(--border-soft); border-radius: 8px; background: var(--card); }
+    .queue-status { padding: 3px 5px; border-radius: 999px; background: var(--warning-soft); color: var(--warning); font-size: 6.5px; font-weight: 700; }
+    .queue-copy strong { display: block; font-size: 7.5px; }
+    .queue-copy span { color: var(--muted-foreground); font-size: 6.5px; }
+    .queue-time { color: var(--muted-foreground); font: 6.5px/1 var(--font-mono); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scene { visibility: hidden !important; opacity: 0 !important; transform: none !important; }
+      .scene-admin { visibility: visible !important; opacity: 1 !important; }
+      .live-dot, .queue-item, .lesson-progress-fill { animation: none !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage-viewport" id="stage-viewport">
+  <div class="stage" id="stage" data-duration="14.2" data-od-id="tribe-it-product-tour" aria-label="Tribe IT member and admin product tour">
+    <svg class="sr-only" aria-hidden="true">
+      <defs>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+        <symbol id="i-learn" viewBox="0 0 24 24"><path d="m3 6 9-4 9 4-9 4-9-4Z"/><path d="M7 8.5V14c0 2 2.2 4 5 4s5-2 5-4V8.5M21 6v7"/></symbol>
+        <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+        <symbol id="i-hash" viewBox="0 0 24 24"><path d="M10 3 8 21M16 3l-2 18M4 9h17M3 15h17"/></symbol>
+        <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"/></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.6 2.5 17.2A2 2 0 0 0 4.2 20h15.6a2 2 0 0 0 1.7-2.8L13.7 3.6a2 2 0 0 0-3.4 0Z"/></symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+        <symbol id="i-events" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"/></symbol>
+        <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3.2L6 21V4Z"/></symbol>
+        <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.5M8.6 13.5l6.8 3.5"/></symbol>
+        <symbol id="i-thumb" viewBox="0 0 24 24"><path d="M7 11v10H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h3Zm0 0 4.2-7.2A2 2 0 0 1 13 2.8V8h6.2a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 18 19h-7"/></symbol>
+      </defs>
+    </svg>
+
+    <p class="sr-only">Creators need community, courses, live, and ops in one platform, not disconnected tools.</p>
+    <p class="sr-only">Stack: Next.js, tRPC, Turbo, PostgreSQL, Capacitor.</p>
+    <p class="sr-only">Outcome: Full-stack creator platform spanning member app and operator admin.</p>
+
+    <!-- frame:1 duration:3100 transition:push-fade -->
+    <section class="scene scene-home" data-scene="home" data-od-id="community-home-scene" aria-label="Community Home">
+      <div class="member-shell">
+        <header class="member-topbar">
+          <div class="top-left"><span class="community-mark">T</span><div class="search"><svg><use href="#i-search"/></svg>Find Everything</div></div>
+          <nav class="space-nav" aria-label="Spaces">
+            <span class="space-link active"><svg><use href="#i-home"/></svg></span>
+            <span class="space-link"><svg><use href="#i-learn"/></svg></span>
+            <span class="space-link"><svg><use href="#i-events"/></svg></span>
+            <span class="space-link"><svg><use href="#i-live"/></svg></span>
+          </nav>
+          <div class="member-actions"><span class="icon-button"><svg><use href="#i-chat"/></svg></span><span class="icon-button"><svg><use href="#i-bell"/></svg></span><span class="icon-button"><svg><use href="#i-bookmark"/></svg></span><span class="avatar sm">OH</span></div>
+        </header>
+        <div class="member-body">
+          <aside class="channel-rail">
+            <p class="rail-label">Channels</p>
+            <div class="channel active"><svg><use href="#i-hash"/></svg>General</div>
+            <div class="channel"><svg><use href="#i-hash"/></svg>Wins</div>
+            <div class="channel"><svg><use href="#i-hash"/></svg>Announcements</div>
+            <span class="collapse-row">‹ &nbsp; Collapse</span>
+          </aside>
+          <main class="member-main">
+            <div class="view-head"><div><h1>Home</h1><p>What's happening across the community</p></div><span class="quiet-chip">Latest</span></div>
+            <div class="composer card" data-od-id="community-composer"><span class="avatar md">OH</span><div class="composer-field">What's on your mind?</div><button class="primary-button" type="button">Post</button></div>
+            <article class="post card" data-od-id="community-post-row">
+              <div class="post-head"><span class="avatar md">CM</span><div class="post-author"><strong>Community member</strong><span>Shared in Wins</span></div><span class="post-time">Today</span></div>
+              <h2>Workshop replay is ready</h2>
+              <p>The session notes and replay are now in Resources. Add your follow-up questions to the thread.</p>
+              <div class="post-actions"><span class="post-action"><svg><use href="#i-thumb"/></svg>Like</span><span class="post-action"><svg><use href="#i-message"/></svg>Comment</span><span class="post-action"><svg><use href="#i-share"/></svg>Share</span></div>
+            </article>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- frame:2 duration:3100 transition:push-fade -->
+    <section class="scene scene-learn" data-scene="learn" data-od-id="learn-scene" aria-label="Learn course modules">
+      <div class="member-shell">
+        <header class="member-topbar">
+          <div class="top-left"><span class="community-mark">T</span><div class="search"><svg><use href="#i-search"/></svg>Find Everything</div></div>
+          <nav class="space-nav" aria-label="Spaces"><span class="space-link"><svg><use href="#i-home"/></svg></span><span class="space-link active"><svg><use href="#i-learn"/></svg></span><span class="space-link"><svg><use href="#i-events"/></svg></span><span class="space-link"><svg><use href="#i-live"/></svg></span></nav>
+          <div class="member-actions"><span class="icon-button"><svg><use href="#i-chat"/></svg></span><span class="icon-button"><svg><use href="#i-bell"/></svg></span><span class="icon-button"><svg><use href="#i-bookmark"/></svg></span><span class="avatar sm">OH</span></div>
+        </header>
+        <div class="member-body">
+          <aside class="channel-rail"><p class="rail-label">Channels</p><div class="channel"><svg><use href="#i-hash"/></svg>General</div><div class="channel"><svg><use href="#i-hash"/></svg>Wins</div><div class="channel"><svg><use href="#i-hash"/></svg>Announcements</div><span class="collapse-row">‹ &nbsp; Collapse</span></aside>
+          <main class="member-main">
+            <div class="view-head"><div><h1>Community Operator Foundations</h1><p>4 lessons · Continue where you left off</p></div><span class="quiet-chip">Continue learning</span></div>
+            <div class="course-layout">
+              <section class="course-card card" data-od-id="course-module-list">
+                <div class="course-banner"><span class="course-kicker">Course content</span><h2>Community Operator Foundations</h2></div>
+                <div class="lesson-list">
+                  <div class="learn-row"><span class="lesson-index">✓</span><div class="lesson-copy"><strong>Welcome and workspace setup</strong><span>Complete</span></div></div>
+                  <div class="learn-row"><span class="lesson-index">02</span><div class="lesson-copy"><strong>Plan your member journey</strong><span>Continue lesson</span></div><span class="progress-chip">In progress</span></div>
+                  <div class="lesson-progress"><div class="lesson-progress-fill"></div></div>
+                  <div class="learn-row"><span class="lesson-index">03</span><div class="lesson-copy"><strong>Run a live session</strong><span>Available next</span></div></div>
+                  <div class="learn-row"><span class="lesson-index">04</span><div class="lesson-copy"><strong>Review community signals</strong><span>Available next</span></div></div>
+                </div>
+              </section>
+              <aside class="course-side"><div class="side-note card"><span>Learning rhythm</span><strong>Progress follows the lesson, not a separate dashboard.</strong><div class="relative-bars" aria-label="Relative lesson activity"><i style="height:34%"></i><i style="height:51%"></i><i style="height:43%"></i><i style="height:72%"></i><i style="height:61%"></i></div></div></aside>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- frame:3 duration:3100 transition:push-fade -->
+    <section class="scene scene-live" data-scene="live" data-od-id="live-entry-scene" aria-label="Live room entry">
+      <div class="live-shell">
+        <main class="live-main">
+          <span class="back-link"><svg><use href="#i-back"/></svg>Back to streams</span>
+          <div class="live-badges"><span class="live-badge"><i class="live-dot"></i>LIVE</span><span class="watching">12 watching</span></div>
+          <h1>Community office hours</h1>
+          <div class="host"><span class="avatar md">SH</span><div class="host-copy"><span>Hosted by</span><strong>Session host</strong></div></div>
+          <p class="join-note">Check your mic and camera on the next screen before entering.</p>
+          <button class="primary-button join-button" type="button"><svg><use href="#i-live"/></svg>Join live stream</button>
+        </main>
+      </div>
+    </section>
+
+    <!-- frame:4 duration:4900 transition:push-fade -->
+    <section class="scene scene-admin" data-scene="admin" data-od-id="admin-command-center-scene" aria-label="Admin Command Center">
+      <div class="admin-shell">
+        <aside class="admin-rail">
+          <div class="admin-brand"><span class="community-mark">T</span><div><strong>Tribe IT</strong><span>Admin</span></div></div>
+          <div class="command-search"><svg><use href="#i-search"/></svg><span>Search</span><kbd class="kbd">⌘K</kbd></div>
+          <nav class="admin-nav"><p class="admin-nav-label">Overview</p><div class="admin-link active"><svg><use href="#i-grid"/></svg>Overview</div><p class="admin-nav-label">People</p><div class="admin-link"><svg><use href="#i-users"/></svg>Members</div><p class="admin-nav-label">Learn</p><div class="admin-link"><svg><use href="#i-learn"/></svg>Courses</div><p class="admin-nav-label">Engage</p><div class="admin-link"><svg><use href="#i-live"/></svg>Live Stream</div><p class="admin-nav-label">Grow</p><div class="admin-link"><svg><use href="#i-message"/></svg>Moderation</div></nav>
+          <div class="admin-profile">Platform</div>
+        </aside>
+        <div class="admin-workspace">
+          <header class="admin-topbar"><div class="breadcrumb"><strong>Overview</strong></div><div class="admin-actions"><span class="avatar admin-avatar">OH</span></div></header>
+          <main class="admin-page">
+            <header class="admin-head"><div><h1>Overview</h1><p>Scan community health, then explore trends. Metrics exclude admin accounts.</p></div></header>
+            <section class="attention-band" data-od-id="attention-band"><span class="attention-icon"><svg><use href="#i-alert"/></svg></span><div><strong>Finish these so someone can join.</strong><p>Add logo · Connect integrations · Create invite</p></div><span class="review-button">I'll explore on my own</span></section>
+            <section class="metric-strip" data-od-id="metric-strip"><article class="metric"><span class="metric-label">Total members</span><div class="metric-value">—</div><div class="metric-note">Excludes admins</div></article><article class="metric"><span class="metric-label">Active today</span><div class="metric-value">—</div><div class="metric-note">Last 24 hours</div></article><article class="metric"><span class="metric-label">New posts</span><div class="metric-value">—</div><div class="metric-note">vs yesterday</div></article><article class="metric"><span class="metric-label">Total posts</span><div class="metric-value">—</div><div class="metric-note">All time</div></article></section>
+            <div class="admin-grid">
+              <section class="admin-panel"><div class="panel-head"><div><h2>Activity by Hour</h2><p>Last 7 days</p></div></div><div class="activity-bars" aria-label="Relative member activity"><span class="bar-group"><i style="height:42%"></i><i style="height:48%"></i></span><span class="bar-group"><i style="height:51%"></i><i style="height:55%"></i></span><span class="bar-group"><i style="height:47%"></i><i style="height:66%"></i></span><span class="bar-group"><i style="height:64%"></i><i style="height:61%"></i></span><span class="bar-group"><i style="height:57%"></i><i style="height:72%"></i></span><span class="bar-group"><i style="height:69%"></i><i style="height:82%"></i></span></div></section>
+              <aside class="admin-panel"><div class="panel-head"><div><h2>Content Health</h2><p>Pending review</p></div></div><div class="queue"><article class="queue-item" data-od-id="highlighted-queue-item"><span class="queue-status">Pending</span><div class="queue-copy"><strong>Review queue</strong><span>Avg wait · Approval rate</span></div><time class="queue-time">—</time></article></div></aside>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+  </div>
+  </div>
+
+  <script>
+    (() => {
+      const viewport = document.getElementById("stage-viewport");
+      const stage = document.getElementById("stage");
+      const fit = () => { stage.style.transform = `scale(${viewport.clientWidth / 640})`; };
+      fit();
+      window.addEventListener("resize", fit, { passive: true });
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const scenes = gsap.utils.toArray(".scene");
+      const showOnly = (active) => {
+        scenes.forEach((scene) => scene.setAttribute("aria-hidden", scene !== active ? "true" : "false"));
+      };
+
+      if (reduce) {
+        gsap.globalTimeline.clear();
+        gsap.set(scenes, { autoAlpha: 0, xPercent: 0 });
+        gsap.set(".scene-admin", { autoAlpha: 1 });
+        showOnly(document.querySelector(".scene-admin"));
+        return;
+      }
+
+      gsap.set(scenes, { autoAlpha: 0, xPercent: 6 });
+      gsap.set(".scene-home", { autoAlpha: 1, xPercent: 0 });
+      showOnly(document.querySelector(".scene-home"));
+
+      const activate = (selector) => () => showOnly(document.querySelector(selector));
+      const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power3.inOut" } });
+
+      tl.fromTo(".scene-home .composer", { y: 13, autoAlpha: .45 }, { y: 0, autoAlpha: 1, duration: .52, ease: "power4.out" }, .18)
+        .fromTo(".scene-home .post", { y: 15, autoAlpha: .3 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power4.out" }, .34)
+        .to(".scene-home", { autoAlpha: 0, xPercent: -6, duration: .58 }, 3.08)
+        .fromTo(".scene-learn", { autoAlpha: 0, xPercent: 7 }, { autoAlpha: 1, xPercent: 0, duration: .66, onStart: activate(".scene-learn") }, 3.08)
+        .fromTo(".scene-learn .learn-row", { y: 10, autoAlpha: .35 }, { y: 0, autoAlpha: 1, duration: .4, stagger: .07, ease: "power3.out" }, 3.3)
+        .fromTo(".lesson-progress-fill", { scaleX: .12 }, { scaleX: 1, duration: 1.15, ease: "power2.out" }, 3.48)
+        .to(".scene-learn", { autoAlpha: 0, xPercent: -6, duration: .58 }, 6.18)
+        .fromTo(".scene-live", { autoAlpha: 0, xPercent: 7 }, { autoAlpha: 1, xPercent: 0, duration: .66, onStart: activate(".scene-live") }, 6.18)
+        .fromTo(".scene-live .live-main > *", { y: 11, autoAlpha: .35 }, { y: 0, autoAlpha: 1, duration: .45, stagger: .055, ease: "power3.out" }, 6.46)
+        .to(".live-dot", { scale: 1.5, duration: .42, repeat: 3, yoyo: true, ease: "power2.inOut" }, 7.35)
+        .to(".scene-live", { autoAlpha: 0, xPercent: -6, duration: .58 }, 9.28)
+        .fromTo(".scene-admin", { autoAlpha: 0, xPercent: 7 }, { autoAlpha: 1, xPercent: 0, duration: .66, onStart: activate(".scene-admin") }, 9.28)
+        .fromTo(".scene-admin .attention-band", { y: 9, autoAlpha: .4 }, { y: 0, autoAlpha: 1, duration: .45, ease: "power4.out" }, 9.56)
+        .fromTo(".scene-admin .metric", { y: 8, autoAlpha: .35 }, { y: 0, autoAlpha: 1, duration: .38, stagger: .07, ease: "power3.out" }, 9.69)
+        .fromTo(".activity-bars i", { scaleY: .12, transformOrigin: "bottom" }, { scaleY: 1, duration: .72, stagger: .035, ease: "power3.out" }, 9.92)
+        .fromTo(".queue-item", { borderColor: "#2c3a52", backgroundColor: "#172131" }, { borderColor: "#ff6b06", backgroundColor: "#2a1c16", duration: .5, ease: "power2.out" }, 10.35)
+        .to(".queue-item", { borderColor: "#2c3a52", backgroundColor: "#172131", duration: .72, ease: "power2.out" }, 11.78)
+        .to(".scene-admin", { autoAlpha: 0, xPercent: -6, duration: .62 }, 13.53)
+        .fromTo(".scene-home", { autoAlpha: 0, xPercent: 7 }, { autoAlpha: 1, xPercent: 0, duration: .67, onStart: activate(".scene-home") }, 13.53)
+        .set(".scene-learn, .scene-live, .scene-admin", { autoAlpha: 0, xPercent: 6 }, 14.2);
+    })();
+  </script>
+  <!-- HYPERFRAMES_META: {"duration":14.2,"loop":true,"aspect":"1:1","frames":[{"frame":1,"duration":3.1,"transition":"push-fade","sceneSummary":"Community Home with channel rail, composer, and post row"},{"frame":2,"duration":3.1,"transition":"push-fade","sceneSummary":"Learn course module list and lesson progress"},{"frame":3,"duration":3.1,"transition":"push-fade","sceneSummary":"Live room entry and device readiness"},{"frame":4,"duration":4.9,"transition":"push-fade","sceneSummary":"Admin Command Center attention band, metric strip, and queue highlight"}]} -->
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>أتومز — جولة المنتج</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: oklch(0.12 0.004 264);
+      --foreground: oklch(0.96 0.003 264);
+      --card: oklch(0.18 0.005 264);
+      --secondary: oklch(0.24 0.006 264);
+      --muted: oklch(0.22 0.005 264);
+      --muted-foreground: oklch(0.72 0.01 258);
+      --border: oklch(0.28 0.006 264);
+      --primary: oklch(0.82 0.13 150);
+      --primary-foreground: oklch(0.14 0.004 264);
+      --destructive: oklch(0.68 0.18 24);
+      --destructive-soft: oklch(0.68 0.18 24 / .14);
+      --signal-soft: oklch(0.82 0.13 150 / .14);
+      --font: "Almarai", sans-serif;
+      --control: 36px;
+      --radius-control: 6px;
+      --radius-card: 12px;
+      --ease-out: cubic-bezier(.23, 1, .32, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--secondary); }
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--foreground);
+      direction: rtl;
+      font-family: var(--font);
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; }
+    svg { display: block; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .stage-viewport, .stage, .stage * { pointer-events: none !important; }
+    .stage-viewport {
+      position: relative;
+      width: min(100vw, 100svh, 640px);
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--background);
+      box-shadow: 0 18px 52px oklch(0.04 0.004 264 / .5);
+    }
+    .stage {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 640px;
+      height: 640px;
+      overflow: hidden;
+      background: var(--background);
+      transform-origin: top left;
+      isolation: isolate;
+    }
+    .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--background); }
+    .scene-topics { visibility: visible; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+
+    /* Shared student chrome */
+    .shell { min-height: 100%; display: grid; grid-template-rows: 54px 2px 1fr; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background);
+    }
+    .brand-group, .nav-actions, .title-row, .meta-row { display: flex; align-items: center; }
+    .brand-group { gap: 11px; min-width: 0; }
+    .wordmark { font-size: 15px; font-weight: 800; line-height: 1; letter-spacing: -.02em; filter: hue-rotate(180deg) invert(1) saturate(2); }
+    .nav-actions { gap: 6px; }
+    .icon-button {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius-control);
+      background: transparent;
+      color: var(--foreground);
+      font-size: 15px;
+    }
+    .icon-button.outline { border: 1px solid var(--border); }
+    .scroll-track { overflow: hidden; background: var(--secondary); }
+    .scroll-value { width: 24%; height: 100%; margin-inline-start: 0; background: var(--primary); transform-origin: right center; }
+    .page { height: 583px; padding: 24px 27px 26px; }
+    .title-row { justify-content: space-between; gap: 18px; }
+    .page-title { margin: 0; font-size: 24px; font-weight: 800; line-height: 1.35; }
+    .page-caption { margin: 5px 0 0; color: var(--muted-foreground); font-size: 10px; line-height: 1.7; }
+    .quiet-link { color: var(--muted-foreground); font-size: 9px; }
+
+    /* Topics */
+    .filter-bar {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+    }
+    .filter-group { display: grid; gap: 5px; }
+    .filter-label { color: var(--muted-foreground); font-size: 8px; }
+    .select-look { min-width: 145px; height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--background); font-size: 9px; font-weight: 700; }
+    .semester-tabs { display: flex; gap: 3px; padding: 3px; border-radius: 8px; background: var(--muted); }
+    .semester-tab { min-width: 56px; height: 36px; display: grid; place-items: center; border-radius: 6px; color: var(--muted-foreground); font-size: 8px; font-weight: 700; }
+    .semester-tab.active { background: var(--primary); color: var(--primary-foreground); }
+    .topics-grid { display: grid; grid-template-columns: 1.2fr .9fr .9fr; gap: 10px; margin-top: 14px; }
+    .topic-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--card); }
+    .topic-card.focus { background: oklch(0.82 0.13 150 / .05); box-shadow: inset -1px 0 0 var(--primary); }
+    .topic-visual { height: 148px; display: grid; place-items: center; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--muted); }
+    .topic-visual.compact { height: 116px; }
+    .chemistry-water { position: relative; width: 116px; height: 100px; }
+    .atom { position: absolute; display: grid; place-items: center; border: 1.6px solid var(--foreground); border-radius: 50%; background: var(--card); font-size: 12px; font-weight: 800; }
+    .atom.o { inset: 27px 35px auto auto; width: 44px; height: 44px; }
+    .atom.h1, .atom.h2 { width: 30px; height: 30px; top: 67px; font-size: 9px; }
+    .atom.h1 { right: 3px; } .atom.h2 { left: 3px; }
+    .bond { position: absolute; width: 35px; height: 1.5px; top: 62px; background: var(--foreground); transform-origin: right center; }
+    .bond.b1 { right: 30px; transform: rotate(36deg); } .bond.b2 { left: 30px; transform: rotate(-36deg); }
+    .equation { display: grid; gap: 10px; text-align: center; font-size: 13px; font-weight: 800; }
+    .equation i { display: block; width: 82px; height: 1px; background: var(--border); }
+    .activation { position: relative; width: 92px; height: 55px; border-bottom: 1px solid var(--border); }
+    .activation::before { content: ""; position: absolute; inset: auto 5px 7px; height: 37px; border-top: 2px solid var(--foreground); border-radius: 50% 50% 0 0; transform: skewX(-20deg); }
+    .topic-body { display: grid; gap: 8px; padding: 12px; }
+    .badge { width: fit-content; height: 20px; display: inline-flex; align-items: center; padding: 0 8px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted-foreground); font-size: 7px; font-weight: 700; }
+    .topic-body h2 { margin: 0; min-height: 36px; font-size: 12px; line-height: 1.5; }
+    .topic-body.compact h2 { font-size: 10px; }
+    .topic-action { height: 30px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--background); font-size: 8px; font-weight: 700; }
+
+    /* Lecture */
+    .lecture-page { display: grid; grid-template-rows: auto 1fr auto auto; gap: 12px; }
+    .lecture-heading { font-size: 17px; }
+    .lecture-meta { color: var(--muted-foreground); font-size: 9px; }
+    .player {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+    }
+    .board { position: absolute; inset: 0; padding: 28px 32px; background: var(--card); }
+    .board-copy { position: absolute; top: 28px; right: 32px; text-align: right; }
+    .board-copy strong { display: block; font-size: 18px; }
+    .board-copy span { display: block; margin-top: 8px; color: var(--muted-foreground); font-size: 9px; }
+    .board-divider { position: absolute; top: 30px; bottom: 30px; left: 48%; width: 1px; background: var(--border); }
+    .molecule-large { position: absolute; left: 65px; top: 76px; transform: scale(1.22); }
+    .board-equations { position: absolute; right: 32px; bottom: 34px; display: grid; gap: 9px; font-size: 11px; font-weight: 700; direction: ltr; }
+    .play-overlay { position: absolute; inset: 0; display: grid; place-items: center; }
+    .play-disc { width: 64px; height: 64px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-size: 22px; }
+    .player-controls { height: 38px; display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 10px; direction: ltr; }
+    .pause { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--card); }
+    .pause i { display: block; width: 2px; height: 10px; background: var(--foreground); box-shadow: 5px 0 0 var(--foreground); }
+    .scrub { position: relative; height: 4px; border-radius: 999px; background: var(--border); }
+    .scrub-fill { position: absolute; inset: 0 auto 0 0; width: 100%; border-radius: inherit; background: var(--primary); transform: scaleX(.18); transform-origin: left center; }
+    .scrub-thumb { position: absolute; top: 50%; left: 18%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--primary); }
+    .time { font-size: 9px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .lecture-resources { display: flex; gap: 8px; }
+    .resource-chip { height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--card); font-size: 8px; font-weight: 700; }
+    .pdf { width: 21px; height: 21px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 4px; font-size: 6px; direction: ltr; }
+
+    /* Attempts */
+    .attempt-shell { min-height: 100%; display: grid; grid-template-rows: 58px 4px 1fr 58px; }
+    .attempt-head { display: flex; align-items: center; gap: 10px; padding: 0 22px; border-bottom: 1px solid var(--border); background: var(--background); }
+    .attempt-head h1 { flex: 1; margin: 0; font-size: 16px; }
+    .attempt-status { color: var(--muted-foreground); font-size: 9px; }
+    .attempt-progress { overflow: hidden; background: var(--secondary); }
+    .attempt-progress i { display: block; width: 44%; height: 100%; background: var(--primary); transform-origin: right center; }
+    .attempt-main { position: relative; padding: 22px 64px; }
+    .question-layout { display: grid; grid-template-columns: 42px 1fr; gap: 13px; direction: ltr; }
+    .question-nav { display: grid; align-content: start; gap: 7px; }
+    .question-number { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--card); font-size: 9px; font-weight: 700; }
+    .question-number.active { border-color: var(--primary); background: var(--primary); color: var(--primary-foreground); }
+    .question-number.done { background: oklch(0.82 0.13 150 / .2); color: var(--foreground); }
+    .question-card { min-height: 355px; display: grid; align-content: start; gap: 14px; padding: 22px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--card); direction: rtl; }
+    .question-card h2 { margin: 0; font-size: 16px; line-height: 1.65; }
+    .formula-plate { display: flex; align-items: center; justify-content: space-around; gap: 20px; min-height: 76px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--muted); direction: ltr; }
+    .formula-group { display: grid; gap: 7px; text-align: center; }
+    .formula-group strong { font-size: 14px; }
+    .formula-group span { color: var(--muted-foreground); font-size: 7px; }
+    .formula-divider { width: 1px; height: 48px; background: var(--border); }
+    .choices { display: grid; gap: 7px; }
+    .choice { min-height: 42px; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--background); font-size: 10px; font-weight: 700; }
+    .choice.selected { border-color: var(--primary); background: var(--signal-soft); }
+    .choice-key { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border: 1px solid var(--border); border-radius: 5px; background: var(--card); font-size: 9px; }
+    .choice-mark { width: 18px; height: 18px; margin-inline-start: auto; color: var(--primary); opacity: 0; }
+    .attempt-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 22px; border-top: 1px solid var(--border); background: var(--background); }
+    .pager { display: flex; gap: 7px; }
+    .button { height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--background); color: var(--foreground); font-size: 9px; font-weight: 700; }
+    .button.primary { border-color: var(--primary); background: var(--primary); color: var(--primary-foreground); }
+    .submit-confirm {
+      position: absolute;
+      inset: 72px 92px auto;
+      z-index: 3;
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+      box-shadow: 0 8px 24px oklch(0.04 0.004 264 / .5);
+      text-align: center;
+      visibility: hidden;
+    }
+    .confirm-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-size: 18px; }
+    .submit-confirm strong { font-size: 15px; }
+    .submit-confirm span { color: var(--muted-foreground); font-size: 9px; }
+    .exam-timer { height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px; border: 1px solid oklch(0.55 0.19 24 / .28); border-radius: var(--radius-control); background: var(--destructive-soft); color: var(--destructive); font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; direction: ltr; }
+    .timer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--destructive); }
+    .exam-note { color: var(--muted-foreground); font-size: 8px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scene { visibility: hidden !important; opacity: 0 !important; transform: none !important; }
+      .scene-topics { visibility: visible !important; opacity: 1 !important; }
+      .topic-card, .scroll-value, .topic-action { transform: none !important; }
+    }
+  </style>
+</head>
+<body><!--
+  THESIS: Atoms turns one Arabic chemistry path into a continuous study loop, refusing the detached dashboard and portfolio-card treatment.
+  OWN-WORLD: Cool Paper, Near Ink, hairline New York chrome, Almarai, and one rare Signal Green for active study state.
+  STORY: The student chooses a topic, studies the lecture, submits homework, and enters a timed exam without leaving the same RTL system.
+  FIRST VIEWPORT: A compact student top bar sits over stage and semester controls, then three chemistry topics with the first ready to open.
+  FORM: Product-native RTL walkthrough condensed from the approved Atoms LMS path. Seed key: atoms-green-signal-path.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+  <div class="stage-viewport" id="stage-viewport">
+    <div class="stage" id="stage" data-duration="13.2" data-od-id="atoms-product-tour" aria-label="جولة في مواضيع ومحاضرات وواجبات وامتحانات أتومز">
+      <svg class="sr-only" aria-hidden="true">
+        <defs>
+          <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></symbol>
+          <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></symbol>
+          <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.2A8.4 8.4 0 0 1 8.8 4a8.4 8.4 0 1 0 11.2 11.2Z"/></symbol>
+          <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+          <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 6 9 6-9 6V6Z"/></symbol>
+          <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+          <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></symbol>
+          <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+          <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+          <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></symbol>
+        </defs>
+      </svg>
+
+      <p class="sr-only">منصة تعليم عربية تجمع المحاضرة والواجب والامتحان في رحلة واحدة.</p>
+      <p class="sr-only">التقنيات: Next.js وSupabase وCloudflare Stream.</p>
+      <p class="sr-only">النتيجة: منصة تعليمية تعمل على atoms.academy.</p>
+
+      <!-- frame:1 duration:3400 transition:push-fade -->
+      <section class="scene scene-topics" data-scene="topics" data-od-id="topics-scene" aria-label="واجهة المواضيع">
+        <div class="shell">
+          <header class="topbar">
+            <div class="brand-group"><strong class="wordmark">Atoms Academy</strong></div>
+            <div class="nav-actions"><span class="icon-button" aria-label="تبديل المظهر"><svg><use href="#i-moon"/></svg></span><span class="icon-button outline" aria-label="تسجيل الخروج"><svg><use href="#i-logout"/></svg></span></div>
+          </header>
+          <div class="scroll-track"><div class="scroll-value"></div></div>
+          <main class="page">
+            <div class="title-row"><div><h1 class="page-title" data-od-id="topics-heading">المواضيع</h1><p class="page-caption">اختر المرحلة والفصل، ثم ابدأ مسار الكيمياء.</p></div><span class="quiet-link">رجوع للرئيسية</span></div>
+            <section class="filter-bar" data-od-id="topics-filters"><div class="filter-group"><span class="filter-label">المرحلة</span><div class="select-look"><span>الحادي عشر العام</span><svg><use href="#i-chevron"/></svg></div></div><div class="filter-group"><span class="filter-label">الفصل الدراسي</span><div class="semester-tabs"><span class="semester-tab active">الأول</span><span class="semester-tab">الثاني</span><span class="semester-tab">الثالث</span></div></div></section>
+            <div class="topics-grid" data-od-id="topics-grid">
+              <article class="topic-card focus" data-od-id="topic-card-bonds"><div class="topic-visual"><div class="chemistry-water"><i class="bond b1"></i><i class="bond b2"></i><span class="atom o">O</span><span class="atom h1">H</span><span class="atom h2">H</span></div></div><div class="topic-body"><span class="badge">مجاني</span><h2>الروابط الكيميائية</h2><span class="topic-action" data-od-id="open-bonds-action">افتح الموضوع</span></div></article>
+              <article class="topic-card" data-od-id="topic-card-stoichiometry"><div class="topic-visual compact"><div class="equation"><span>2H₂ + O₂</span><i></i><span>2H₂O</span></div></div><div class="topic-body compact"><span class="badge">مدفوع</span><h2>الحسابات الكيميائية</h2><span class="topic-action" data-od-id="unlock-stoichiometry-action">افتح بالكود</span></div></article>
+              <article class="topic-card" data-od-id="topic-card-reactions"><div class="topic-visual compact"><div class="activation"></div></div><div class="topic-body compact"><span class="badge">مجاني</span><h2>التفاعل الكيميائي</h2><span class="topic-action" data-od-id="open-reactions-action">افتح الموضوع</span></div></article>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      <!-- frame:2 duration:3300 transition:push-fade -->
+      <section class="scene scene-lecture" data-scene="lecture" data-od-id="lecture-scene" aria-label="مشغل المحاضرة">
+        <div class="shell">
+          <header class="topbar"><div class="brand-group"><strong class="wordmark">Atoms Academy</strong></div><div class="nav-actions"><span class="icon-button" aria-label="تبديل المظهر"><svg><use href="#i-moon"/></svg></span><span class="icon-button outline" aria-label="تسجيل الخروج"><svg><use href="#i-logout"/></svg></span></div></header>
+          <div class="scroll-track"><div class="scroll-value"></div></div>
+          <main class="page lecture-page">
+            <div class="title-row"><div><span class="quiet-link">رجوع للموضوع</span><h1 class="page-title lecture-heading" data-od-id="lecture-heading">الرابطة التساهمية</h1></div><span class="lecture-meta">المحاضرة 1 من 4 — الروابط الكيميائية</span></div>
+            <div class="player" data-od-id="lecture-player"><div class="board" id="lecture-board"><div class="board-copy"><strong>الرابطة التساهمية</strong><span>مشاركة زوج إلكتروني بين ذرتين</span></div><i class="board-divider"></i><div class="chemistry-water molecule-large"><i class="bond b1"></i><i class="bond b2"></i><span class="atom o">O</span><span class="atom h1">H</span><span class="atom h2">H</span></div><div class="board-equations"><span>Na → Na⁺ + e⁻</span><span>Cl + e⁻ → Cl⁻</span><span>H₂O · رابطة تساهمية</span></div></div><div class="play-overlay"><span class="play-disc"><svg><use href="#i-play"/></svg></span></div></div>
+            <div class="player-controls" data-od-id="lecture-scrubber"><span class="pause"><i></i></span><div class="scrub"><i class="scrub-fill"></i><i class="scrub-thumb"></i></div><time class="time" id="lecture-time">02:04 / 12:40</time></div>
+            <div class="lecture-resources"><span class="resource-chip"><i class="pdf">PDF</i>ورقة عمل · تمثيل لويس</span></div>
+          </main>
+        </div>
+      </section>
+
+      <!-- frame:3 duration:3300 transition:push-fade -->
+      <section class="scene scene-homework" data-scene="homework" data-od-id="homework-scene" aria-label="حالة إرسال الواجب">
+        <div class="attempt-shell">
+          <header class="attempt-head"><h1>واجب</h1><span class="attempt-status">2/4</span><span class="icon-button outline" aria-label="خروج"><svg><use href="#i-close"/></svg></span></header>
+          <div class="attempt-progress"><i></i></div>
+          <main class="attempt-main"><div class="question-layout"><nav class="question-nav" aria-label="أسئلة الواجب"><span class="question-number">١</span><span class="question-number active">٢</span><span class="question-number">٣</span><span class="question-number">٤</span></nav><article class="question-card" data-od-id="homework-question"><h2>أي الجزيئات التالية ترتبط بروابط تساهمية؟</h2><div class="formula-plate"><div class="formula-group"><strong>H–O–H</strong><span>جزيء الماء</span></div><i class="formula-divider"></i><div class="formula-group"><strong>Na⁺ Cl⁻</strong><span>كلوريد الصوديوم</span></div></div><div class="choices"><div class="choice"><span class="choice-key">أ</span>كلوريد الصوديوم NaCl</div><div class="choice homework-answer"><span class="choice-key">ب</span>الماء H₂O<span class="choice-mark"><svg><use href="#i-check"/></svg></span></div><div class="choice"><span class="choice-key">ج</span>الصوديوم Na</div><div class="choice"><span class="choice-key">د</span>الحديد Fe</div></div></article></div><aside class="submit-confirm" data-od-id="homework-submitted"><span class="confirm-mark"><svg><use href="#i-check"/></svg></span><strong>تم إرسال الواجب</strong><span>تقدر تراجع إجاباتك الآن.</span></aside></main>
+          <footer class="attempt-foot"><span class="button">السابق</span><div class="pager"><span class="question-number done">١</span><span class="question-number active">٢</span><span class="question-number">٣</span><span class="question-number">٤</span></div><span class="button primary homework-submit">إرسال الواجب</span></footer>
+        </div>
+      </section>
+
+      <!-- frame:4 duration:3200 transition:push-fade -->
+      <section class="scene scene-exam" data-scene="exam" data-od-id="exam-scene" aria-label="امتحان بوقت محدد">
+        <div class="attempt-shell">
+          <header class="attempt-head"><h1>اختبار</h1><span class="exam-timer" data-od-id="exam-countdown"><i class="timer-dot"></i><svg><use href="#i-clock"/></svg><time id="exam-clock">04:18</time></span><span class="attempt-status">2/4</span><span class="icon-button outline" aria-label="خروج"><svg><use href="#i-close"/></svg></span></header>
+          <div class="attempt-progress"><i></i></div>
+          <main class="attempt-main"><div class="question-layout"><nav class="question-nav" aria-label="أسئلة الامتحان"><span class="question-number">١</span><span class="question-number active">٢</span><span class="question-number">٣</span><span class="question-number">٤</span></nav><article class="question-card" data-od-id="exam-question"><div class="meta-row"><span class="exam-note">الوقت المتبقي يظهر أعلى الصفحة</span></div><h2>أي الجزيئات التالية ترتبط بروابط تساهمية؟</h2><div class="formula-plate"><div class="formula-group"><strong>H–O–H</strong><span>جزيء الماء</span></div><i class="formula-divider"></i><div class="formula-group"><strong>Na⁺ Cl⁻</strong><span>كلوريد الصوديوم</span></div></div><div class="choices"><div class="choice"><span class="choice-key">أ</span>كلوريد الصوديوم NaCl</div><div class="choice exam-answer"><span class="choice-key">ب</span>الماء H₂O<span class="choice-mark"><svg><use href="#i-check"/></svg></span></div><div class="choice"><span class="choice-key">ج</span>الصوديوم Na</div><div class="choice"><span class="choice-key">د</span>الحديد Fe</div></div></article></div></main>
+          <footer class="attempt-foot"><span class="button">السابق</span><div class="pager"><span class="question-number done">١</span><span class="question-number active">٢</span><span class="question-number">٣</span><span class="question-number">٤</span></div><span class="button primary">التالي</span></footer>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const viewport = document.getElementById("stage-viewport");
+      const stage = document.getElementById("stage");
+      const fit = () => { stage.style.transform = `scale(${viewport.clientWidth / 640})`; };
+      fit();
+      window.addEventListener("resize", fit, { passive: true });
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const scenes = gsap.utils.toArray(".scene");
+      const showOnly = (active) => scenes.forEach((scene) => scene.setAttribute("aria-hidden", scene !== active ? "true" : "false"));
+
+      if (reduce) {
+        gsap.globalTimeline.clear();
+        gsap.set(scenes, { autoAlpha: 0, xPercent: 0 });
+        gsap.set(".scene-topics", { autoAlpha: 1 });
+        showOnly(document.querySelector(".scene-topics"));
+        return;
+      }
+
+      gsap.set(scenes, { autoAlpha: 0, xPercent: 4 });
+      gsap.set(".scene-topics", { autoAlpha: 1, xPercent: 0 });
+      gsap.set(".submit-confirm", { autoAlpha: 0, y: 10, scale: .97 });
+      showOnly(document.querySelector(".scene-topics"));
+      const activate = (selector) => () => showOnly(document.querySelector(selector));
+      const clock = document.getElementById("exam-clock");
+      const lectureTime = document.getElementById("lecture-time");
+      const lectureTick = { seconds: 124 };
+      const formatTime = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+      const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power3.inOut" } });
+
+      tl.fromTo(".scene-topics .topics-grid", { y: 0 }, { y: -3, duration: 1.35, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0)
+        .fromTo(".scene-topics .topic-card.focus", { scale: .985 }, { scale: 1.018, duration: .42, yoyo: true, repeat: 1, ease: "power3.out" }, 1.18)
+        .to(".scene-topics", { autoAlpha: 0, xPercent: -4, duration: .52 }, 3.08)
+        .fromTo(".scene-lecture", { autoAlpha: 0, xPercent: 5 }, { autoAlpha: 1, xPercent: 0, duration: .58, onStart: activate(".scene-lecture") }, 3.08)
+        .fromTo("#lecture-board", { scale: 1 }, { scale: 1.025, duration: 2.9, ease: "sine.inOut" }, 3.28)
+        .fromTo(".scene-lecture .scrub-fill", { scaleX: .18 }, { scaleX: .39, duration: 2.7, ease: "none" }, 3.38)
+        .fromTo(".scene-lecture .scrub-thumb", { left: "18%" }, { left: "39%", duration: 2.7, ease: "none" }, 3.38)
+        .to(lectureTick, { seconds: 169, duration: 2.7, ease: "none", onUpdate: () => { lectureTime.textContent = `${formatTime(lectureTick.seconds)} / 12:40`; } }, 3.38)
+        .to(".scene-lecture", { autoAlpha: 0, xPercent: -4, duration: .52 }, 6.28)
+        .fromTo(".scene-homework", { autoAlpha: 0, xPercent: 5 }, { autoAlpha: 1, xPercent: 0, duration: .58, onStart: activate(".scene-homework") }, 6.28)
+        .fromTo(".homework-answer", { backgroundColor: "var(--background)", borderColor: "var(--border)" }, { backgroundColor: "var(--signal-soft)", borderColor: "var(--primary)", duration: .3, ease: "power3.out" }, 6.96)
+        .fromTo(".homework-answer .choice-mark", { autoAlpha: 0, scale: .7 }, { autoAlpha: 1, scale: 1, duration: .26, ease: "back.out(1.35)" }, 7.14)
+        .fromTo(".homework-submit", { y: 0 }, { y: 2, duration: .12, yoyo: true, repeat: 1, ease: "power2.out" }, 7.7)
+        .to(".submit-confirm", { autoAlpha: 1, y: 0, scale: 1, duration: .42, ease: "power4.out" }, 7.98)
+        .to(".scene-homework .question-layout", { autoAlpha: .28, duration: .3 }, 7.98)
+        .to(".scene-homework", { autoAlpha: 0, xPercent: -4, duration: .52 }, 9.42)
+        .fromTo(".scene-exam", { autoAlpha: 0, xPercent: 5 }, { autoAlpha: 1, xPercent: 0, duration: .58, onStart: activate(".scene-exam") }, 9.42)
+        .fromTo(".exam-answer", { backgroundColor: "var(--background)", borderColor: "var(--border)" }, { backgroundColor: "var(--signal-soft)", borderColor: "var(--primary)", duration: .3, ease: "power3.out" }, 10.05)
+        .fromTo(".exam-answer .choice-mark", { autoAlpha: 0, scale: .7 }, { autoAlpha: 1, scale: 1, duration: .26, ease: "back.out(1.35)" }, 10.22)
+        .set(clock, { textContent: "04:18" }, 9.42)
+        .set(clock, { textContent: "04:17" }, 10.08)
+        .set(clock, { textContent: "04:16" }, 10.74)
+        .set(clock, { textContent: "04:15" }, 11.4)
+        .to(".exam-timer", { y: -2, duration: .18, yoyo: true, repeat: 1, ease: "power2.out" }, 11.38)
+        .to(".scene-exam", { autoAlpha: 0, xPercent: -4, duration: .58 }, 12.58)
+        .fromTo(".scene-topics", { autoAlpha: 0, xPercent: 5 }, { autoAlpha: 1, xPercent: 0, duration: .62, onStart: activate(".scene-topics") }, 12.58)
+        .set(".scene-lecture, .scene-homework, .scene-exam", { autoAlpha: 0, xPercent: 4 }, 13.2)
+        .set(".submit-confirm", { autoAlpha: 0, y: 10, scale: .97 }, 13.2)
+        .set(".scene-homework .question-layout", { autoAlpha: 1 }, 13.2)
+        .set("#lecture-board", { scale: 1 }, 13.2)
+        .set(".scene-lecture .scrub-fill", { scaleX: .18 }, 13.2)
+        .set(".scene-lecture .scrub-thumb", { left: "18%" }, 13.2)
+        .set(".homework-answer, .exam-answer", { backgroundColor: "var(--background)", borderColor: "var(--border)" }, 13.2)
+        .set(".homework-answer .choice-mark, .exam-answer .choice-mark", { autoAlpha: 0, scale: .7 }, 13.2)
+        .set(lectureTick, { seconds: 124 }, 13.2)
+        .set(lectureTime, { textContent: "02:04 / 12:40" }, 13.2)
+        .set(clock, { textContent: "04:18" }, 13.2);
+    })();
+  </script>
+  <!-- HYPERFRAMES_META: {"duration":13.2,"loop":true,"aspect":"1:1","direction":"rtl","frames":[{"frame":1,"duration":3.4,"transition":"push-fade","sceneSummary":"Arabic topics hub with stage and semester controls"},{"frame":2,"duration":3.3,"transition":"push-fade","sceneSummary":"Lecture player advances through the covalent bonds lesson"},{"frame":3,"duration":3.3,"transition":"push-fade","sceneSummary":"Homework answer is selected and the submission confirmation appears"},{"frame":4,"duration":3.2,"transition":"push-fade","sceneSummary":"Timed exam shows a live countdown chip before looping to topics"}]} -->
+</body>
+</html>

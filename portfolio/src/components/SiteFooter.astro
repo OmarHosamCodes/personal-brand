@@ -1,0 +1,23 @@
+---
+import { site } from '../content/site';
+---
+
+<footer class="border-border text-muted-foreground border-t py-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
+  <div
+    class="mx-auto flex max-w-6xl flex-col gap-3 px-5 md:flex-row md:items-center md:justify-between md:gap-4 md:px-8"
+  >
+    <p class="m-0 text-[15px] leading-[1.6]">
+      © {new Date().getFullYear()} {site.name}
+    </p>
+    <p class="m-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] leading-[1.6]">
+      <a
+        class="hover:text-foreground focus-visible:ring-ring rounded-[6px] no-underline outline-none transition-colors duration-[var(--duration-control)] ease-[var(--ease-broadcast)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+        href="/system"
+      >
+        Design system
+      </a>
+      <span aria-hidden="true" class="text-muted-foreground/50 select-none">·</span>
+      <span>omarhosamcodes.com</span>
+    </p>
+  </div>
+</footer>

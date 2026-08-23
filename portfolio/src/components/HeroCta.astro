@@ -1,0 +1,131 @@
+---
+import { site } from '../content/site';
+---
+
+{
+  /*
+    Broadcast CTAs — adapted from CodePen-style scaleX fill wipe + arrow-on-hover,
+    reframed for Creator Broadcast: flat, One Signal orange primary, rising fill
+    (mark-direction) on secondary. Anti-refs: purple glow, rainbow borders, offset shadows.
+  */
+}
+<div class="hero-cta mt-7 flex flex-wrap justify-center gap-3" role="group" aria-label="Primary actions">
+  <a
+    href={site.cta.primary.href}
+    class="hero-cta__primary group focus-visible:ring-ring inline-flex h-11 items-center justify-center gap-0 overflow-hidden rounded-[10px] border border-primary bg-primary px-4 text-[15px] font-medium text-primary-foreground no-underline outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+  >
+    <span class="relative z-10">{site.cta.primary.label}</span>
+    <svg
+      class="hero-cta__go relative z-10 size-3.5 shrink-0"
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M2.5 7h7.5M7 3.5 10.5 7 7 10.5"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </a>
+
+  <a
+    href={site.cta.secondary.href}
+    class="hero-cta__secondary group focus-visible:ring-ring inline-flex h-11 items-center justify-center overflow-hidden rounded-[10px] px-4 text-[15px] font-medium text-foreground no-underline outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+  >
+    <span class="relative z-10">{site.cta.secondary.label}</span>
+  </a>
+</div>
+
+<style>
+  .hero-cta__primary {
+    transition:
+      background-color var(--duration-control) var(--ease-broadcast),
+      border-color var(--duration-control) var(--ease-broadcast);
+  }
+
+  .hero-cta__go {
+    width: 0;
+    margin-inline-start: 0;
+    opacity: 0;
+    transform: translateX(-4px);
+    overflow: hidden;
+    transition:
+      width 220ms var(--ease-broadcast),
+      margin-inline-start 220ms var(--ease-broadcast),
+      opacity 180ms var(--ease-broadcast),
+      transform 220ms var(--ease-broadcast);
+  }
+
+  .hero-cta__primary:hover,
+  .hero-cta__primary:focus-visible {
+    background-color: var(--kinetic-orange-hover);
+    border-color: var(--kinetic-orange-hover);
+  }
+
+  .hero-cta__primary:hover .hero-cta__go,
+  .hero-cta__primary:focus-visible .hero-cta__go {
+    width: 0.875rem;
+    margin-inline-start: 0.5rem;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .hero-cta__secondary {
+    position: relative;
+    isolation: isolate;
+    transition:
+      color 200ms var(--ease-broadcast) 60ms,
+      background-color 200ms var(--ease-broadcast);
+  }
+
+  .hero-cta__secondary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--foreground);
+    transform: scaleY(0);
+    transform-origin: bottom center;
+    transition: transform 280ms var(--ease-broadcast);
+  }
+
+  .hero-cta__secondary:hover,
+  .hero-cta__secondary:focus-visible {
+    color: var(--background);
+  }
+
+  .hero-cta__secondary:hover::before,
+  .hero-cta__secondary:focus-visible::before {
+    transform: scaleY(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cta__primary,
+    .hero-cta__go,
+    .hero-cta__secondary,
+    .hero-cta__secondary::before {
+      transition: none;
+    }
+
+    .hero-cta__go {
+      width: 0.875rem;
+      margin-inline-start: 0.5rem;
+      opacity: 1;
+      transform: none;
+    }
+
+    .hero-cta__secondary::before {
+      transform: none;
+      opacity: 0;
+    }
+
+    .hero-cta__secondary:hover,
+    .hero-cta__secondary:focus-visible {
+      background: var(--muted);
+      color: var(--foreground);
+    }
+  }
+</style>

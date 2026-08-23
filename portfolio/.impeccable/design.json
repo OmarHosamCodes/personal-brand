@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-23T05:45:00.000Z",
+  "title": "Design System: Omar Hosam Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(98.5% 0 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0 89.9)",
+          "oklch(25% 0 89.9)",
+          "oklch(40% 0 89.9)",
+          "oklch(55% 0 89.9)",
+          "oklch(70% 0 89.9)",
+          "oklch(85% 0 89.9)",
+          "oklch(94% 0 89.9)",
+          "oklch(98.5% 0 89.9)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(17.8% 0 89.9)",
+        "tonalRamp": [
+          "oklch(12% 0 89.9)",
+          "oklch(17.8% 0 89.9)",
+          "oklch(28% 0 89.9)",
+          "oklch(42% 0 89.9)",
+          "oklch(55% 0 89.9)",
+          "oklch(70% 0 89.9)",
+          "oklch(85% 0 89.9)",
+          "oklch(96% 0 89.9)"
+        ]
+      },
+      "kinetic-orange": {
+        "role": "primary",
+        "displayName": "Kinetic Orange",
+        "canonical": "oklch(61.7% 0.205 37.4)",
+        "tonalRamp": [
+          "oklch(28% 0.14 37.4)",
+          "oklch(38% 0.16 37.4)",
+          "oklch(48% 0.18 37.4)",
+          "oklch(55% 0.19 37.4)",
+          "oklch(61.7% 0.205 37.4)",
+          "oklch(68% 0.19 37.4)",
+          "oklch(78% 0.14 40)",
+          "oklch(90% 0.06 45)"
+        ]
+      },
+      "soft-surface": {
+        "role": "neutral",
+        "displayName": "Soft Surface",
+        "canonical": "oklch(96.5% 0.006 264.5)",
+        "tonalRamp": [
+          "oklch(20% 0.006 264)",
+          "oklch(30% 0.006 264)",
+          "oklch(45% 0.006 264)",
+          "oklch(60% 0.006 264)",
+          "oklch(75% 0.006 264)",
+          "oklch(88% 0.006 264)",
+          "oklch(96.5% 0.006 264.5)",
+          "oklch(99% 0.003 264)"
+        ]
+      },
+      "code-surface": {
+        "role": "neutral",
+        "displayName": "Code Surface",
+        "canonical": "oklch(13% 0.005 264)",
+        "tonalRamp": [
+          "oklch(10% 0.005 264)",
+          "oklch(13% 0.005 264)",
+          "oklch(18% 0.006 264)",
+          "oklch(26% 0.007 264)",
+          "oklch(35% 0.006 264)",
+          "oklch(50% 0.006 264)",
+          "oklch(70% 0.005 264)",
+          "oklch(90% 0.003 264)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero names and decisive headlines only; keep lines short."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explanations and supporting copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase pipeline status, metadata, technical identifiers."
+      },
+      "arabic-signature": {
+        "displayName": "Arabic Signature",
+        "purpose": "عمر حسام on its own RTL block."
+      }
+    },
+    "shadows": [
+      {
+        "name": "stage-lift",
+        "value": "0 20px 48px oklch(18% 0 0 / 0.12)",
+        "purpose": "Structural shadow for framed preview and elevated panels."
+      },
+      {
+        "name": "card-lift",
+        "value": "0 12px 24px color-mix(in oklch, oklch(17.8% 0 89.9) 10%, transparent)",
+        "purpose": "Functional overlap only; resting cards stay flat."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-broadcast",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Single ease-out for all state transitions."
+      },
+      {
+        "name": "duration-control",
+        "value": "140ms",
+        "purpose": "Default control hover/focus transitions."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "760px" },
+      { "name": "lg", "value": "1060px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Kinetic-orange primary action; once per decision cluster.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Primary action</button>",
+      "css": ".ds-btn-primary { background: oklch(61.7% 0.205 37.4); color: oklch(17.8% 0 89.9); border: 1px solid oklch(61.7% 0.205 37.4); border-radius: 10px; height: 44px; padding: 0 14px; font: 400 15px/1.55 \"IBM Plex Sans Variable\", \"Segoe UI\", sans-serif; cursor: pointer; transition: background 140ms cubic-bezier(0.23, 1, 0.32, 1), border-color 140ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-primary:hover { background: oklch(68% 0.19 37.4); border-color: oklch(68% 0.19 37.4); } .ds-btn-primary:focus-visible { outline: 3px solid oklch(61.7% 0.205 37.4); outline-offset: 3px; } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet bordered control for secondary actions.",
+      "html": "<button class=\"ds-btn-secondary\" type=\"button\">Secondary</button>",
+      "css": ".ds-btn-secondary { background: oklch(97.8% 0.002 89.9); color: oklch(17.8% 0 89.9); border: 1px solid oklch(92.8% 0.006 264.5); border-radius: 10px; height: 44px; padding: 0 14px; font: 400 15px/1.55 \"IBM Plex Sans Variable\", \"Segoe UI\", sans-serif; cursor: pointer; transition: background 140ms cubic-bezier(0.23, 1, 0.32, 1), border-color 140ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-secondary:hover { background: oklch(96.5% 0.006 264.5); border-color: oklch(85% 0.008 264); } .ds-btn-secondary:focus-visible { outline: 3px solid oklch(61.7% 0.205 37.4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Live Badge",
+      "kind": "chip",
+      "refersTo": "live-badge",
+      "description": "Mono status chip with kinetic orange signal dot.",
+      "html": "<span class=\"ds-live-badge\"><span class=\"ds-live-badge__dot\" aria-hidden=\"true\"></span>LIVE</span>",
+      "css": ".ds-live-badge { display: inline-flex; align-items: center; gap: 8px; background: oklch(97.8% 0.002 89.9); color: oklch(17.8% 0 89.9); border: 1px solid oklch(92.8% 0.006 264.5); border-radius: 7px; padding: 8px 10px; font: 500 11px/1 \"IBM Plex Mono\", Consolas, monospace; letter-spacing: 0.08em; text-transform: uppercase; } .ds-live-badge__dot { width: 8px; height: 8px; border-radius: 50%; background: oklch(61.7% 0.205 37.4); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat bordered surface; no resting shadow.",
+      "html": "<article class=\"ds-card\"><h3 class=\"ds-card__title\">Panel</h3><p class=\"ds-card__body\">Calm surface for grouped content.</p></article>",
+      "css": ".ds-card { background: oklch(97.8% 0.002 89.9); color: oklch(17.8% 0 89.9); border: 1px solid oklch(92.8% 0.006 264.5); border-radius: 10px; padding: 18px 20px; } .ds-card__title { margin: 0 0 8px; font: 600 18px/1.1 \"Syne Variable\", \"Segoe UI\", sans-serif; letter-spacing: -0.01em; } .ds-card__body { margin: 0; font: 400 15px/1.55 \"IBM Plex Sans Variable\", \"Segoe UI\", sans-serif; color: oklch(52.1% 0.008 88.7); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Stroke field with kinetic-orange focus ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Email\" aria-label=\"Email\" />",
+      "css": ".ds-input { box-sizing: border-box; width: 100%; max-width: 320px; height: 44px; padding: 0 12px; background: oklch(98.5% 0 89.9); color: oklch(17.8% 0 89.9); border: 1px solid oklch(92.8% 0.006 264.5); border-radius: 10px; font: 400 15px/1.55 \"IBM Plex Sans Variable\", \"Segoe UI\", sans-serif; } .ds-input::placeholder { color: oklch(52.1% 0.008 88.7); } .ds-input:focus-visible { outline: 3px solid oklch(61.7% 0.205 37.4); outline-offset: 3px; border-color: oklch(61.7% 0.205 37.4); }"
+    },
+    {
+      "name": "Nav Tab Active",
+      "kind": "nav",
+      "refersTo": "scene-tab-active",
+      "description": "Selected nav reverse to ink with orange status cue.",
+      "html": "<button class=\"ds-nav-tab ds-nav-tab--active\" type=\"button\" aria-selected=\"true\"><span class=\"ds-nav-tab__label\">Work</span><span class=\"ds-nav-tab__dot\" aria-hidden=\"true\"></span></button>",
+      "css": ".ds-nav-tab { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 7px 12px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: oklch(17.8% 0 89.9); font: 400 15px/1.1 \"IBM Plex Sans Variable\", \"Segoe UI\", sans-serif; cursor: pointer; } .ds-nav-tab--active { background: oklch(17.8% 0 89.9); color: oklch(98.5% 0 89.9); } .ds-nav-tab__dot { width: 8px; height: 8px; border-radius: 50%; background: oklch(61.7% 0.205 37.4); } .ds-nav-tab:focus-visible { outline: 3px solid oklch(61.7% 0.205 37.4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Mono Label",
+      "kind": "custom",
+      "refersTo": "label",
+      "description": "Uppercase technical metadata label.",
+      "html": "<span class=\"ds-mono-label\">SYSTEM READY</span>",
+      "css": ".ds-mono-label { font: 500 11px/1 \"IBM Plex Mono\", Consolas, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(52.1% 0.008 88.7); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Creator Broadcast Pipeline",
+    "overview": "The portfolio inherits Omar Hosam's technical editorial identity: a near-white working surface, near-black framing, cool-gray structure, compact technical typography, and one kinetic orange signal. Interfaces stay calm so authored moments — mark, bilingual lockup, primary action — remain recognizable.\n\nEngineering reads as deliberate systems craft. Egyptian and Arabic point of view is carried by typography and rhythm (Syne + IBM Plex + Noto Sans Arabic), never by decorative cultural shorthand.",
+    "keyCharacteristics": [
+      "High-contrast, technical editorial composition",
+      "One orange accent reserved for state, progress, and primary action",
+      "Compact Latin display type paired with comfortably led Arabic",
+      "Flat surfaces, fine rules, and selective structural depth",
+      "One forward-building motion language derived from the mark",
+      "shadcn/ui primitives themed to the broadcast tokens (light + dark)"
+    ],
+    "rules": [
+      {
+        "name": "The One Signal Rule",
+        "body": "Orange is kinetic, not decorative. Use it to communicate live state, progress, one primary action, or a deliberate interruption; otherwise ration it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Full-Field Exception",
+        "body": "A full orange background is reserved for high-recognition interruption states. It is not a routine content background.",
+        "section": "colors"
+      },
+      {
+        "name": "The Separate Rhythm Rule",
+        "body": "Do not compress Arabic into Syne's tight Latin rhythm. Set lang=\"ar\", use right-to-left direction, keep letter spacing at zero, and give the Arabic name its own comfortably led line or block.",
+        "section": "typography"
+      },
+      {
+        "name": "The Short Display Rule",
+        "body": "Large Syne headlines are terse and architectural. Move explanations into body copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Structural Depth Rule",
+        "body": "Apply shadow only where one functional layer overlaps another. Resting controls, navigation, and ordinary cards remain flat.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Intact Mark Rule",
+        "body": "The dot and both slashes are one indivisible signature. Animation may sequence their arrival; layout and color may not separate them.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do use orange for live state, progress, one primary action, or a deliberate interruption",
+      "Do keep Arabic on its own right-to-left, comfortably led line or block",
+      "Do keep resting UI flat; reserve shadow for functional overlap",
+      "Do retain keyboard navigation, 44px targets, visible focus, and reduced-motion settle behavior",
+      "Do theme shadcn primitives from these tokens — do not introduce a second palette"
+    ],
+    "donts": [
+      "Don't recolor individual mark pieces or use orange as routine decoration / default content background",
+      "Don't force Arabic into Latin tracking, leading, alignment, or typeface conventions",
+      "Don't add gradients, glass effects, ornamental jargon, or decorative shadows",
+      "Don't fabricate metrics, customers, testimonials, audience claims, or technical proof",
+      "Don't use Geist, Inter, or other default stacks as the brand voice"
+    ]
+  }
+}

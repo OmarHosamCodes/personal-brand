@@ -1,0 +1,28 @@
+---
+import { site } from '../../content/site';
+---
+
+{
+  site.proof.length > 0 && (
+    <section
+      class="border-border border-b py-10"
+      aria-labelledby="proof-heading"
+    >
+      <div class="mx-auto max-w-6xl px-5 md:px-8">
+        <h2 id="proof-heading" class="font-label text-muted-foreground m-0 mb-5">
+          Social proof
+        </h2>
+        <ul class="m-0 flex list-none flex-wrap gap-x-8 gap-y-3 p-0">
+          {site.proof.map((item) => (
+            <li class="text-[15px]">
+              <span class="font-medium">{item.label}</span>
+              {item.detail && (
+                <span class="text-muted-foreground"> — {item.detail}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

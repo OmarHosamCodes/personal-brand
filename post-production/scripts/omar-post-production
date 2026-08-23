@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Launch Omar Hosam Post-Production (portable / installed)
+set -euo pipefail
+
+SHARE="${OMAR_POST_HOME:-}"
+if [[ -z "$SHARE" ]]; then
+  HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  if [[ -d "$HERE/../assets/brand/intro" ]]; then
+    SHARE="$(cd "$HERE/.." && pwd)"
+  elif [[ -d "$HOME/.local/share/omar-hosam-post" ]]; then
+    SHARE="$HOME/.local/share/omar-hosam-post"
+  else
+    echo "Omar Post-Production is not installed. Run: ./scripts/install-linux.sh" >&2
+    exit 1
+  fi
+fi
+
+export OMAR_POST_HOME="$SHARE"
+export OMAR_POST_OPEN="${OMAR_POST_OPEN:-1}"
+export PORT="${PORT:-8787}"
+
+# Prefer compiled binary if present
+if [[ -x "$SHARE/bin/omar-post-production" ]]; then
+  exec "$SHARE/bin/omar-post-production"
+fi
+
+if command -v bun >/dev/null 2>&1; then
+  cd "$SHARE"
+  exec bun "$SHARE/server/src/index.ts"
+fi
+
+echo "Bun is required to run Omar Post-Production (https://bun.sh)." >&2
+exit 1

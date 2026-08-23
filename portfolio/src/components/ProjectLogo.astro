@@ -1,0 +1,133 @@
+---
+interface Props {
+  id: 'ogm-reimagined' | 'brainiac' | 'atoms';
+  name: string;
+}
+
+const { id, name } = Astro.props;
+
+const iconLink =
+  'group relative inline-flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+---
+
+{
+  id === 'ogm-reimagined' && (
+    <div class="flex shrink-0 items-center gap-1.5" role="group" aria-label={`${name} products`}>
+      <a
+        href="https://capsulescommunity.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Capsules Community (opens in new tab)"
+        title="Capsules Community"
+        class:list={[iconLink, 'hover:border-[#ffd100]/60 hover:bg-[#ffd100]/10']}
+      >
+        <picture>
+          <source
+            type="image/webp"
+            srcset="/logos/capsule-community-32.webp 1x, /logos/capsule-community-64.webp 2x"
+          />
+          <img
+            src="/logos/capsule-community-32.png"
+            srcset="/logos/capsule-community-32.png 1x, /logos/capsule-community-64.png 2x"
+            width="32"
+            height="32"
+            alt=""
+            decoding="async"
+            class="size-8 object-cover transition-transform group-hover:scale-105"
+          />
+        </picture>
+      </a>
+      <a
+        href="https://learn.school-of-marketing.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="School of Marketing — OGMs (opens in new tab)"
+        title="Organic Growth Marketers"
+        class:list={[iconLink, 'hover:border-primary/60 hover:bg-primary/10']}
+      >
+        <picture>
+          <source
+            type="image/webp"
+            srcset="/logos/school-of-marketing-32.webp 1x, /logos/school-of-marketing-64.webp 2x"
+          />
+          <img
+            src="/logos/school-of-marketing-32.png"
+            srcset="/logos/school-of-marketing-32.png 1x, /logos/school-of-marketing-64.png 2x"
+            width="32"
+            height="32"
+            alt=""
+            decoding="async"
+            class="size-8 object-cover transition-transform group-hover:scale-105"
+          />
+        </picture>
+      </a>
+    </div>
+  )
+}
+{
+  id === 'brainiac' && (
+    <a
+      href="https://github.com/OmarHosamCodes/brainiac"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Orch on GitHub (opens in new tab)"
+      title="Orch"
+      class:list={[iconLink, 'hover:border-foreground/40 hover:bg-muted/30']}
+    >
+      <svg
+        class="size-6 transition-transform group-hover:scale-105"
+        viewBox="0 0 24 24"
+        fill="none"
+        role="img"
+        aria-hidden="true"
+      >
+        <rect width="24" height="24" rx="6" fill="oklch(0.18 0 0)" />
+        <path d="M7 9h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        <path d="M7 12h6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        <path d="M7 15h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        <circle cx="16.5" cy="15" r="1.4" fill="currentColor" />
+      </svg>
+    </a>
+  )
+}
+{
+  id === 'atoms' && (
+    <a
+      href="https://atoms.academy"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Atoms Academy (opens in new tab)"
+      title="Atoms Academy"
+      class:list={[iconLink, 'hover:border-[#83dc97]/60 hover:bg-[#83dc97]/10']}
+    >
+      <svg
+        class="size-6 transition-transform group-hover:scale-105"
+        viewBox="0 0 24 24"
+        fill="none"
+        role="img"
+        aria-hidden="true"
+      >
+        <rect width="24" height="24" rx="6" fill="oklch(0.16 0.005 264)" />
+        <ellipse
+          cx="12"
+          cy="12"
+          rx="7.5"
+          ry="3.2"
+          stroke="#83dc97"
+          stroke-width="1.3"
+          transform="rotate(-32 12 12)"
+        />
+        <ellipse
+          cx="12"
+          cy="12"
+          rx="7.5"
+          ry="3.2"
+          stroke="#83dc97"
+          stroke-width="1.3"
+          transform="rotate(32 12 12)"
+        />
+        <circle cx="12" cy="12" r="1.6" fill="#83dc97" />
+      </svg>
+    </a>
+  )
+}

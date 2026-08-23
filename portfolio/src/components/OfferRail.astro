@@ -1,0 +1,25 @@
+---
+import { site } from '../content/site';
+---
+
+<nav class="mt-8" aria-label="Offers">
+  <ul class="m-0 flex list-none flex-wrap items-center justify-center gap-y-1 p-0">
+    {
+      site.offers.map((offer, i) => (
+        <li class="flex items-center">
+          {i > 0 && (
+            <span class="text-muted-foreground/40 px-2.5 select-none" aria-hidden="true">
+              /
+            </span>
+          )}
+          <a
+            href={offer.href}
+            class="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex h-11 items-center px-1 text-[15px] no-underline outline-none transition-colors duration-[var(--duration-control)] ease-[var(--ease-broadcast)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+          >
+            {offer.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

@@ -1,0 +1,72 @@
+---
+import '@fontsource-variable/syne';
+import '@fontsource-variable/ibm-plex-sans';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource-variable/noto-sans-arabic';
+import '../styles/global.css';
+import {
+  personJsonLd,
+  professionalServiceJsonLd,
+  siteOrigin,
+} from '../lib/agent-content';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'Omar Hosam — Senior Full-Stack Software Engineer',
+  description =
+    'Product interfaces, APIs, and commerce systems for founders. Freelance, consultation, and training.',
+  noindex = false,
+} = Astro.props;
+
+const origin = siteOrigin();
+const canonical = new URL(Astro.url.pathname === '/' ? '/' : Astro.url.pathname, origin).href;
+const ogImage = `${origin}/og.png`;
+const jsonLd = JSON.stringify([personJsonLd(), professionalServiceJsonLd()]);
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0b0d" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Omar Hosam" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <title>{title}</title>
+    <script type="application/ld+json" set:html={jsonLd} />
+  </head>
+  <body class="bg-background text-foreground antialiased">
+    <a
+      href="#main"
+      class="bg-primary text-primary-foreground focus:ring-ring sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:px-3 focus:py-2 focus:ring-2"
+    >
+      Skip to content
+    </a>
+    <slot />
+  </body>
+</html>

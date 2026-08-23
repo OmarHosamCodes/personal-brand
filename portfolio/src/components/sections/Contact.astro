@@ -1,0 +1,111 @@
+---
+import { ContactForm, parseContactIntent } from '../ContactForm';
+import { site } from '../../content/site';
+
+const mailto = `mailto:${site.contact.email}`;
+const intents = site.contact.intents;
+const initialIntent = parseContactIntent(Astro.url.searchParams.get('intent'));
+
+const directChannels = [
+  { label: 'Email', href: mailto, text: site.contact.email, external: false },
+  { label: 'Phone', href: site.contact.phoneHref, text: site.contact.phone, external: false },
+  ...site.contact.socials.map((social) => ({
+    label: social.label,
+    href: social.href,
+    text: social.label,
+    external: true,
+  })),
+];
+---
+
+<section
+  id="contact"
+  class="border-border scroll-mt-28 border-b py-16 md:scroll-mt-16 md:py-20"
+  aria-labelledby="contact-heading"
+>
+  <div class="mx-auto max-w-6xl px-5 md:px-8">
+    <div class="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
+      <div class="max-w-md space-y-6 lg:sticky lg:top-24">
+        <div class="space-y-3">
+          <h2
+            id="contact-heading"
+            class="font-display m-0 text-balance text-[clamp(1.75rem,3.2vw,2.75rem)] font-semibold tracking-[-0.02em]"
+          >
+            {site.contact.heading}
+          </h2>
+          <p class="text-muted-foreground m-0 max-w-[42ch] text-[15px] leading-[1.6]">
+            {site.contact.intro}
+          </p>
+        </div>
+
+        <div class="border-border space-y-3 border-t pt-5">
+          <div class="flex items-baseline justify-between gap-4">
+            <p class="font-label text-muted-foreground m-0">Direct channels</p>
+            <p class="text-muted-foreground m-0 text-[15px] leading-[1.6]">Prefer email?</p>
+          </div>
+          <dl class="contact-direct m-0 grid list-none gap-x-6 gap-y-3.5 p-0 sm:grid-cols-2">
+            {
+              directChannels.map((channel) => (
+                <div class="min-w-0">
+                  <dt class="font-label text-muted-foreground mb-1 block">{channel.label}</dt>
+                  <dd class="m-0">
+                    <a
+                      href={channel.href}
+                      class="contact-direct__link"
+                      rel={channel.external ? 'noopener noreferrer' : undefined}
+                      target={channel.external ? '_blank' : undefined}
+                      aria-label={
+                        channel.external
+                          ? `${channel.label} (opens in new tab)`
+                          : undefined
+                      }
+                    >
+                      {channel.text}
+                    </a>
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </div>
+
+      <ContactForm
+        client:visible
+        mailto={mailto}
+        intents={intents}
+        headingId="contact-heading"
+        initialIntent={initialIntent}
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-direct__link {
+    color: var(--foreground);
+    font-size: 15px;
+    line-height: 1.55;
+    text-decoration: none;
+    outline: none;
+    transition: color var(--duration-control) var(--ease-broadcast);
+  }
+
+  .contact-direct__link:hover,
+  .contact-direct__link:focus-visible {
+    color: var(--primary);
+  }
+
+  .contact-direct__link:focus-visible {
+    border-radius: 6px;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-direct__link {
+      transition: none;
+    }
+  }
+</style>
