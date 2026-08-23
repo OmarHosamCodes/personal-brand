@@ -12,19 +12,29 @@ import {
 
 const SITE = 'https://omarhosamcodes.com';
 
-const CSP = [
-  "default-src 'self'",
-  // ponytail: Astro island bootstraps are inline modules. Ceiling: no nonce yet. Upgrade: Astro experimental CSP nonces.
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-  "font-src 'self'",
-  "connect-src 'self'",
-  "frame-src 'self'",
-  "form-action 'self'",
-  "base-uri 'self'",
-  "frame-ancestors 'none'",
-].join('; ');
+function contentSecurityPolicy(): string {
+  const scriptSrc = ["'self'", "'unsafe-inline'"];
+  const connectSrc = ["'self'"];
+  // ponytail: Vercel injects vercel.live toolbar on hosted deploys only.
+  if (import.meta.env.VERCEL) {
+    scriptSrc.push('https://vercel.live');
+    connectSrc.push('https://vercel.live');
+  }
+
+  return [
+    "default-src 'self'",
+    // ponytail: Astro island bootstraps are inline modules. Ceiling: no nonce yet. Upgrade: Astro experimental CSP nonces.
+    `script-src ${scriptSrc.join(' ')}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    `connect-src ${connectSrc.join(' ')}`,
+    "frame-src 'self'",
+    "form-action 'self'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
+  ].join('; ');
+}
 
 const LINK_HEADER = [
   `<${SITE}/sitemap.xml>; rel="sitemap"; type="application/xml"`,
@@ -38,8 +48,14 @@ const SECURITY = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
   'X-Frame-Options': 'DENY',
-  'Content-Security-Policy': CSP,
 } as const;
+
+function securityHeaders(): Record<string, string> {
+  return {
+    ...SECURITY,
+    'Content-Security-Policy': contentSecurityPolicy(),
+  };
+}
 
 function prefersMarkdown(accept: string | null): boolean {
   if (!accept) return false;
@@ -64,7 +80,7 @@ function textResponse(
   return new Response(body, {
     status: 200,
     headers: {
-      ...SECURITY,
+      ...securityHeaders(),
       'Content-Type': contentType,
       'Cache-Control': 'public, max-age=3600',
       Link: LINK_HEADER,
@@ -108,7 +124,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
   const headers = new Headers(response.headers);
 
-  for (const [key, value] of Object.entries(SECURITY)) {
+  for (const [key, value] of Object.entries(securityHeaders())) {
     headers.set(key, value);
   }
 
