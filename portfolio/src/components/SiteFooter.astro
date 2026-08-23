@@ -1,23 +1,47 @@
 ---
+import { BrandMark } from './BrandMark';
 import { site } from '../content/site';
+
+const year = new Date().getFullYear();
 ---
 
-<footer class="border-border text-muted-foreground border-t py-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
+<footer
+  class="border-border text-muted-foreground border-t py-8 pb-[max(2rem,env(safe-area-inset-bottom))]"
+>
   <div
-    class="mx-auto flex max-w-6xl flex-col gap-3 px-5 md:flex-row md:items-center md:justify-between md:gap-4 md:px-8"
+    class="mx-auto flex max-w-6xl flex-col items-start gap-4 px-5 sm:flex-row sm:items-center sm:justify-between md:px-8"
   >
-    <p class="m-0 text-[15px] leading-[1.6]">
-      © {new Date().getFullYear()} {site.name}
-    </p>
-    <p class="m-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] leading-[1.6]">
+    <div class="flex h-9 items-center gap-3">
       <a
-        class="hover:text-foreground focus-visible:ring-ring rounded-[6px] no-underline outline-none transition-colors duration-[var(--duration-control)] ease-[var(--ease-broadcast)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
-        href="/system"
+        href="/"
+        aria-label={`${site.name} home`}
+        class="text-foreground focus-visible:ring-ring inline-flex items-center rounded-[6px] no-underline outline-none transition-transform duration-[var(--duration-control)] ease-[var(--ease-broadcast)] hover:scale-110 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transform-none"
       >
-        Design system
+        <BrandMark className="size-6 shrink-0" centered decorative />
       </a>
-      <span aria-hidden="true" class="text-muted-foreground/50 select-none">·</span>
-      <span>omarhosamcodes.com</span>
-    </p>
+      <span class="text-[14px] leading-none font-normal text-muted-foreground select-none">
+        © {year} {site.name}
+      </span>
+    </div>
+
+    <a
+      href="/system"
+      class="group focus-visible:ring-ring inline-flex h-9 items-center gap-2 rounded-[10px] border border-border/60 bg-card/40 px-3.5 text-[14px] font-medium text-muted-foreground no-underline outline-none transition-all duration-[var(--duration-control)] ease-[var(--ease-broadcast)] hover:border-primary/40 hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+    >
+      <span class="leading-none">Check out the design system</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="size-3.5 text-primary transition-transform duration-[var(--duration-control)] ease-[var(--ease-broadcast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none"
+        aria-hidden="true"
+      >
+        <path d="M4 12L12 4M12 4H6M12 4V10" />
+      </svg>
+    </a>
   </div>
 </footer>
