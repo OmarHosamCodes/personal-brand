@@ -33,14 +33,22 @@ const spotlightById = {
         site.projects.map((project) => (
           <li>
             <article class="border-border bg-card flex h-full flex-col overflow-hidden rounded-[16px] border">
-              <WorkSpotlight
-                client:visible
-                className="border-b border-border"
-                src={project.frame}
-                title={`${project.name} case frame`}
-                x={spotlightById[project.id].x}
-                y={spotlightById[project.id].y}
-              />
+              <div class="relative aspect-square overflow-hidden border-b border-border">
+                <div class="shimmer absolute inset-0 bg-secondary" aria-hidden="true"></div>
+                <iframe
+                  src={project.frame}
+                  title={`${project.name} case frame`}
+                  class="relative z-[1] aspect-square h-full w-full border-0 bg-transparent"
+                  loading="eager"
+                  sandbox="allow-scripts"
+                ></iframe>
+                <WorkSpotlight
+                  client:load
+                  className="z-10"
+                  x={spotlightById[project.id].x}
+                  y={spotlightById[project.id].y}
+                />
+              </div>
               <div class="flex flex-1 flex-col gap-3 p-5">
                 <div class="flex items-center gap-3">
                   <ProjectLogo id={project.id} name={project.name} />

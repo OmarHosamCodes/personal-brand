@@ -4,10 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Orch — product tour</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -333,7 +329,8 @@
     </div>
   </div>
 
-  <script>
+  <script src="/frames/vendor/gsap.min.js" defer></script>
+  <script defer>
     (() => {
       const viewport = document.getElementById("stage-viewport");
       const stage = document.getElementById("stage");

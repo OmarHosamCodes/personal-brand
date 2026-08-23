@@ -86,6 +86,7 @@ for (const file of [
   'public/logos/capsule-community-64.png',
   'public/logos/school-of-marketing-32.png',
   'public/logos/school-of-marketing-64.png',
+  'public/frames/vendor/gsap.min.js',
 ]) {
   assert(existsSync(path.join(root, file)), `asset missing: ${file}`);
 }
