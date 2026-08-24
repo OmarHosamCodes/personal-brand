@@ -6,67 +6,97 @@ const isCurrentRole = (period: string) => period.toLowerCase() === 'present';
 
 <section
   id="experience"
-  class="border-border scroll-mt-28 border-b py-16 md:scroll-mt-16 md:py-20"
+  class="border-border scroll-mt-28 border-b py-20 md:scroll-mt-16 md:py-24"
   aria-labelledby="experience-heading"
 >
-  <div class="mx-auto max-w-6xl space-y-10 px-5 md:px-8">
-    <div class="max-w-2xl space-y-3">
+  <div
+    class="mx-auto grid max-w-6xl gap-12 px-5 md:px-8 lg:grid-cols-[minmax(20rem,0.85fr)_minmax(0,1.15fr)] lg:gap-20"
+  >
+    <header class="max-w-md lg:sticky lg:top-24 lg:self-start">
       <h2
         id="experience-heading"
-        class="font-display m-0 text-[clamp(1.75rem,3.2vw,2.75rem)] font-semibold tracking-[-0.02em]"
+        class="font-display m-0 text-[clamp(2.75rem,5vw,4.5rem)] leading-[0.9] font-semibold tracking-[-0.04em]"
       >
         Experience
       </h2>
-      <p class="text-muted-foreground m-0 max-w-[55ch] text-[15px] leading-[1.6]">
+      <p
+        class="text-muted-foreground m-0 mt-5 max-w-[34ch] text-[15px] leading-[1.6] md:mt-6"
+      >
         {site.experienceIntro}
       </p>
-    </div>
-    <ol class="experience-timeline m-0 max-w-2xl list-none p-0">
+      <div class="mt-8 flex items-center gap-3" aria-hidden="true">
+        <span class="bg-primary size-2.5 rounded-full"></span>
+        <span class="bg-border h-px w-16"></span>
+        <span class="font-label text-muted-foreground">Now broadcasting</span>
+      </div>
+    </header>
+
+    <ol class="experience-ledger border-border m-0 list-none border-t p-0">
       {
-        site.experience.map((item) => {
+        site.experience.map((item, index) => {
           const current = isCurrentRole(item.period);
           const orgHref = 'orgHref' in item ? item.orgHref : undefined;
 
           return (
-            <li aria-current={current ? 'true' : undefined}>
-              <article class="experience-timeline__item">
-                <span
-                  class:list={[
-                    'experience-timeline__dot',
-                    current && 'experience-timeline__dot--live',
-                  ]}
-                  aria-hidden="true"
-                />
-                <p
-                  class:list={[
-                    'font-label m-0',
-                    current ? 'text-primary' : 'text-muted-foreground',
-                  ]}
-                >
-                  {item.period}
-                </p>
-                <h3 class="font-display m-0 mt-2 text-[18px] leading-[1.1] font-semibold tracking-[-0.01em]">
-                  {item.role}
-                </h3>
-                {
-                  orgHref ? (
-                    <a
-                      href={orgHref}
-                      class="text-muted-foreground hover:text-foreground focus-visible:ring-ring mt-1 inline-flex items-center text-[15px] leading-[1.6] underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:outline-none"
-                      rel="noopener noreferrer"
-                      target="_blank"
+            <li
+              class:list={[
+                'experience-ledger__row border-border relative border-b',
+                current && 'experience-ledger__row--current',
+              ]}
+              aria-current={current ? 'true' : undefined}
+            >
+              <article class="grid gap-5 py-7 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-8 md:py-9">
+                <div class="flex items-start justify-between gap-4 sm:block">
+                  <p
+                    class:list={[
+                      'font-label m-0 leading-[1.35]',
+                      current ? 'text-primary' : 'text-muted-foreground',
+                    ]}
+                  >
+                    {item.period}
+                  </p>
+                  <span class="font-label text-muted-foreground/60 sm:mt-4 sm:block">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
+
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                    <h3
+                      class="font-display m-0 text-[clamp(1.5rem,3vw,2.25rem)] leading-[1.05] font-semibold tracking-[-0.03em]"
                     >
-                      {item.org}
-                    </a>
-                  ) : (
-                    <p class="text-muted-foreground m-0 mt-1 text-[15px] leading-[1.6]">
-                      {item.org}
-                    </p>
-                  )
-                }
-                <p class="text-muted-foreground m-0 mt-2 max-w-[55ch] text-[15px] leading-[1.6]">
-                  {item.summary}
-                </p>
+                      {item.role}
+                    </h3>
+                    {
+                      current && (
+                        <span class="font-label border-primary/40 text-primary inline-flex min-h-7 items-center rounded-full border px-2.5">
+                          Current
+                        </span>
+                      )
+                    }
+                  </div>
+                  <div class="mt-3">
+                    {
+                      orgHref ? (
+                        <a
+                          href={orgHref}
+                          class="text-foreground hover:text-primary focus-visible:ring-ring inline-flex items-center text-[15px] leading-[1.55] font-medium underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          {item.org}
+                        </a>
+                      ) : (
+                        <p class="text-foreground m-0 text-[15px] leading-[1.55] font-medium">
+                          {item.org}
+                        </p>
+                      )
+                    }
+                  </div>
+                  <p class="text-muted-foreground m-0 mt-4 max-w-[56ch] text-[15px] leading-[1.65]">
+                    {item.summary}
+                  </p>
+                </div>
               </article>
             </li>
           );
@@ -77,40 +107,13 @@ const isCurrentRole = (period: string) => period.toLowerCase() === 'present';
 </section>
 
 <style>
-  .experience-timeline {
-    padding-left: 1.75rem;
-  }
-
-  .experience-timeline__item {
-    position: relative;
-    padding-bottom: 2.5rem;
-  }
-
-  .experience-timeline__item:last-child {
-    padding-bottom: 0;
-  }
-
-  .experience-timeline__item:not(:last-child)::after {
+  .experience-ledger__row--current::before {
     content: '';
     position: absolute;
-    left: calc(-1.75rem + 0.3125rem);
-    top: calc(0.375rem + 0.3125rem);
-    bottom: 0;
-    width: 1px;
-    background: var(--border);
-  }
-
-  .experience-timeline__dot {
-    position: absolute;
-    left: -1.75rem;
-    top: 0.375rem;
-    width: 0.625rem;
-    height: 0.625rem;
-    border-radius: 50%;
-    background: var(--border);
-  }
-
-  .experience-timeline__dot--live {
+    top: -1px;
+    left: 0;
+    width: min(8rem, 30%);
+    height: 2px;
     background: var(--primary);
   }
 </style>
