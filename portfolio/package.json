@@ -12,6 +12,7 @@
     "astro": "astro",
     "fresh": "bun run scripts/fresh-dev.ts",
     "self-check": "bun run scripts/self-check.ts",
+    "portrait": "bun run scripts/export-portrait.ts",
     "icons": "bash scripts/generate-icons.sh"
   },
   "dependencies": {

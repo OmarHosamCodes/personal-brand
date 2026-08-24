@@ -7,8 +7,10 @@ export const site = {
     'I build product interfaces, APIs, and commerce systems founders can ship and extend.',
   location: 'Cairo, Egypt',
   portrait: {
-    src: '/omar-portrait.png?v=10',
+    src: '/omar-portrait.png?v=18',
     alt: 'Omar Hosam, arms crossed, studio portrait with kinetic orange rim light',
+    width: 768,
+    height: 704,
   },
   /** Hero layout: C = centered lockup; portrait secondary (OD winner override) */
   heroLayout: 'C' as const,

@@ -40,38 +40,17 @@ import { site } from '../../content/site';
         </div>
       </div>
 
-      <figure class="hero-portrait relative z-10 m-0 mx-auto w-full max-w-3xl">
+      <figure class="relative z-10 m-0 mx-auto w-full max-w-3xl">
         <img
           src={site.portrait.src}
           alt={site.portrait.alt}
-          width="720"
-          height="900"
-          class="portrait-rim aspect-[4/5] max-h-[min(44rem,52svh)] w-full object-cover object-[center_12%] md:max-h-[44rem]"
+          width={site.portrait.width}
+          height={site.portrait.height}
+          class="mx-auto h-auto w-full max-h-[min(44rem,52svh)] md:max-h-[44rem]"
           fetchpriority="high"
+          decoding="async"
         />
       </figure>
     </div>
   </div>
 </section>
-
-<style>
-  /* Full-bleed bottom fade — matches baked-in portrait gradient height */
-  .hero-portrait::after {
-    content: '';
-    pointer-events: none;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    z-index: 20;
-    width: 100vw;
-    height: 22%;
-    transform: translateX(-50%);
-    background: linear-gradient(
-      to top,
-      var(--background) 0%,
-      color-mix(in oklch, var(--background) 88%, transparent) 22%,
-      color-mix(in oklch, var(--background) 45%, transparent) 58%,
-      transparent 100%
-    );
-  }
-</style>

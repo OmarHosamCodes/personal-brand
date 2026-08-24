@@ -82,6 +82,8 @@ for (const file of [
   'public/og.png',
   'public/site.webmanifest',
   'public/omar-portrait.png',
+  'assets/omar-portrait-source.png',
+  'assets/omar-portrait-flat.png',
   'public/logos/capsule-community-32.png',
   'public/logos/capsule-community-64.png',
   'public/logos/school-of-marketing-32.png',
@@ -104,6 +106,20 @@ for (const [rel, w, h] of iconSizes) {
   assert(out.status === 0, `identify failed: ${rel}`);
   const [iw, ih] = (out.stdout ?? '').trim().split(/\s+/).map(Number);
   assert(iw === w && ih === h, `${rel} must be ${w}×${h}, got ${iw}×${ih}`);
+}
+
+{
+  const out = spawnSync(
+    'magick',
+    ['identify', '-format', '%w %h', path.join(root, 'public/omar-portrait.png')],
+    { encoding: 'utf8' },
+  );
+  assert(out.status === 0, 'identify failed: public/omar-portrait.png');
+  const [iw, ih] = (out.stdout ?? '').trim().split(/\s+/).map(Number);
+  assert(
+    iw === site.portrait.width && ih === site.portrait.height,
+    `omar-portrait.png must be ${site.portrait.width}×${site.portrait.height}, got ${iw}×${ih}`,
+  );
 }
 
 const faviconSvg = spawnSync('cat', [path.join(root, 'public/favicon.svg')], { encoding: 'utf8' });
