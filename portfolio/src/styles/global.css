@@ -239,9 +239,4 @@
       background-position: -100% 0;
     }
   }
-
-  /* B&W portrait: shift only chromatic blue rim toward kinetic orange */
-  .portrait-rim {
-    filter: hue-rotate(165deg) saturate(1.2);
-  }
 }
