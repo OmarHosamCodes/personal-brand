@@ -22,14 +22,14 @@ const nav = [
     </a>
 
     <nav
-      class="site-header__nav hidden items-center md:flex"
+      class="site-header__nav flex min-w-0 flex-1 items-center justify-end gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       aria-label="Primary"
       data-site-nav
     >
       {
         nav.map((item) => (
           <a
-            class="site-header__link font-label text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex h-11 items-center px-2.5 no-underline outline-none transition-colors duration-[var(--duration-control)] ease-[var(--ease-broadcast)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            class="site-header__link font-label text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex h-11 shrink-0 items-center px-2 no-underline outline-none transition-colors duration-[var(--duration-control)] ease-[var(--ease-broadcast)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:px-2.5"
             href={item.href}
             data-nav-id={item.id}
           >
@@ -39,25 +39,6 @@ const nav = [
       }
     </nav>
   </div>
-
-  {/* DESIGN: mobile sticky horizontal strip when vertical rail is impractical */}
-  <nav
-    class="site-header__nav border-border md:hidden flex gap-0.5 overflow-x-auto border-t px-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    aria-label="Sections"
-    data-site-nav
-  >
-    {
-      nav.map((item) => (
-        <a
-          class="site-header__link font-label text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex h-11 shrink-0 items-center px-3 no-underline outline-none transition-colors duration-[var(--duration-control)] ease-[var(--ease-broadcast)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          href={item.href}
-          data-nav-id={item.id}
-        >
-          {item.label}
-        </a>
-      ))
-    }
-  </nav>
 </header>
 
 <style>

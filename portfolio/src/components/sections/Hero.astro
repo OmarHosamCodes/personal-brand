@@ -21,35 +21,43 @@ import { site } from '../../content/site';
       <HeroCta />
     </div>
 
-    {/* Portrait stage: full-bleed curved text behind the image */}
-    <div class="relative mt-10 w-full md:mt-12">
-      <div
-        class="pointer-events-none absolute top-1/2 left-1/2 z-0 w-screen -translate-x-1/2 -translate-y-1/2"
-        aria-hidden="true"
+    {/* Portrait stage: flex-grow fill + curved text behind portrait (OD hero C mobile) */}
+    <div
+      class="relative -mx-5 mt-2 min-h-[20rem] w-[calc(100%+2.5rem)] flex-1 md:mx-0 md:mt-12 md:w-full"
+    >
+      <figure
+        class="absolute inset-0 m-0 md:relative md:inset-auto md:h-auto md:min-h-0 md:w-full md:max-w-3xl md:mx-auto"
       >
-        <div class="pointer-events-auto w-full">
-          <CurvedLoop
-            client:load
-            marqueeText={`${site.title} ● `}
-            speed={0.55}
-            curveAmount={380}
-            direction="left"
-            interactive={true}
-            className="curved-loop-brand"
+        <div
+          class="pointer-events-none absolute top-1/2 left-1/2 z-0 w-screen -translate-x-1/2 -translate-y-1/2"
+          aria-hidden="true"
+        >
+          <div class="pointer-events-auto w-full">
+            <CurvedLoop
+              client:load
+              marqueeText={`${site.title} ● `}
+              speed={0.55}
+              curveAmount={380}
+              direction="left"
+              interactive={true}
+              className="curved-loop-brand"
+            />
+          </div>
+        </div>
+
+        <div
+          class="relative z-10 mx-auto size-full md:aspect-[768/704] md:w-full md:max-h-[44rem]"
+        >
+          <img
+            src={site.portrait.src}
+            alt={site.portrait.alt}
+            width={site.portrait.width}
+            height={site.portrait.height}
+            class="block size-full object-cover object-[center_12%] md:object-contain md:object-center"
+            fetchpriority="high"
+            decoding="async"
           />
         </div>
-      </div>
-
-      <figure class="relative z-10 m-0 mx-auto w-full max-w-3xl">
-        <img
-          src={site.portrait.src}
-          alt={site.portrait.alt}
-          width={site.portrait.width}
-          height={site.portrait.height}
-          class="mx-auto h-auto w-full max-h-[min(44rem,52svh)] md:max-h-[44rem]"
-          fetchpriority="high"
-          decoding="async"
-        />
       </figure>
     </div>
   </div>
