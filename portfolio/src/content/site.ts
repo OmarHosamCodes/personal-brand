@@ -73,7 +73,7 @@ export const site = {
       stack: ['Next.js', 'tRPC', 'Turbo', 'PostgreSQL', 'Capacitor'],
       href: 'https://github.com/OmarHosamCodes/ogm-reimagined',
       linkLabel: 'Open on GitHub',
-      frame: '/frames/ogm-reimagined.html?v=gsap',
+      frame: '/frames/ogm-reimagined.html?v=loop',
     },
     {
       id: 'brainiac',
@@ -82,7 +82,7 @@ export const site = {
       stack: ['React', 'Hono', 'oRPC', 'PostgreSQL'],
       href: 'https://github.com/OmarHosamCodes/brainiac',
       linkLabel: 'Open on GitHub',
-      frame: '/frames/brainiac.html?v=gsap',
+      frame: '/frames/brainiac.html?v=loop',
     },
     {
       id: 'atoms',
@@ -91,7 +91,7 @@ export const site = {
       stack: ['Next.js', 'Supabase', 'Cloudflare Stream'],
       href: 'https://atoms.academy',
       linkLabel: 'Open live site',
-      frame: '/frames/atoms.html?v=gsap',
+      frame: '/frames/atoms.html?v=loop',
     },
   ],
   experienceIntro: 'In-house and freelance roles shipping product.',

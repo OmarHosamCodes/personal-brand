@@ -383,9 +383,12 @@
       showOnly(document.querySelector(".scene-home"));
 
       const activate = (selector) => () => showOnly(document.querySelector(selector));
-      const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power3.inOut" } });
+      const tl = gsap.timeline({ repeat: -1, repeatRefresh: true, defaults: { ease: "power3.inOut" } });
 
-      tl.fromTo(".scene-home .composer", { y: 13, autoAlpha: .45 }, { y: 0, autoAlpha: 1, duration: .52, ease: "power4.out" }, .18)
+      tl.set(scenes, { autoAlpha: 0, xPercent: 6 })
+        .set(".scene-home", { autoAlpha: 1, xPercent: 0 })
+        .call(() => showOnly(document.querySelector(".scene-home")))
+        .fromTo(".scene-home .composer", { y: 13, autoAlpha: .45 }, { y: 0, autoAlpha: 1, duration: .52, ease: "power4.out" }, .18)
         .fromTo(".scene-home .post", { y: 15, autoAlpha: .3 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power4.out" }, .34)
         .to(".scene-home", { autoAlpha: 0, xPercent: -6, duration: .58 }, 3.08)
         .fromTo(".scene-learn", { autoAlpha: 0, xPercent: 7 }, { autoAlpha: 1, xPercent: 0, duration: .66, onStart: activate(".scene-learn") }, 3.08)

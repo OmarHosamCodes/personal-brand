@@ -354,9 +354,12 @@
       gsap.set(".scene-canvas", { autoAlpha: 1, xPercent: 0 });
       showOnly(document.querySelector(".scene-canvas"));
       const activate = (selector) => () => showOnly(document.querySelector(selector));
-      const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power3.inOut" } });
+      const tl = gsap.timeline({ repeat: -1, repeatRefresh: true, defaults: { ease: "power3.inOut" } });
 
-      tl.fromTo(".scene-canvas .canvas-plane", { x: -8, y: 6 }, { x: 5, y: -3, duration: 3.75, ease: "sine.inOut" }, 0)
+      tl.set(scenes, { autoAlpha: 0, xPercent: 5 })
+        .set(".scene-canvas", { autoAlpha: 1, xPercent: 0 })
+        .call(() => showOnly(document.querySelector(".scene-canvas")))
+        .fromTo(".scene-canvas .canvas-plane", { x: -8, y: 6 }, { x: 5, y: -3, duration: 3.75, ease: "sine.inOut" }, 0)
         .fromTo(".scene-canvas .node-focus", { width: 208, height: 139, scale: .96 }, { width: 250, height: 178, scale: 1, duration: .72, ease: "power4.out" }, .52)
         .fromTo(".scene-canvas .node-detail", { clipPath: "inset(0 100% 0 0 round 10px)", autoAlpha: .4 }, { clipPath: "inset(0 0% 0 0 round 10px)", autoAlpha: 1, duration: .62, ease: "power3.out" }, .8)
         .fromTo(".scene-canvas .edge", { scaleX: 0 }, { scaleX: 1, duration: .55, stagger: .12, ease: "power3.out" }, .96)

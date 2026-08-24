@@ -347,9 +347,13 @@
       const lectureTime = document.getElementById("lecture-time");
       const lectureTick = { seconds: 124 };
       const formatTime = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
-      const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power3.inOut" } });
+      const tl = gsap.timeline({ repeat: -1, repeatRefresh: true, defaults: { ease: "power3.inOut" } });
 
-      tl.fromTo(".scene-topics .topics-grid", { y: 0 }, { y: -3, duration: 1.35, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0)
+      tl.set(scenes, { autoAlpha: 0, xPercent: 4 })
+        .set(".scene-topics", { autoAlpha: 1, xPercent: 0 })
+        .set(".submit-confirm", { autoAlpha: 0, y: 10, scale: .97 })
+        .call(() => showOnly(document.querySelector(".scene-topics")))
+        .fromTo(".scene-topics .topics-grid", { y: 0 }, { y: -3, duration: 1.35, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0)
         .fromTo(".scene-topics .topic-card.focus", { scale: .985 }, { scale: 1.018, duration: .42, yoyo: true, repeat: 1, ease: "power3.out" }, 1.18)
         .to(".scene-topics", { autoAlpha: 0, xPercent: -4, duration: .52 }, 3.08)
         .fromTo(".scene-lecture", { autoAlpha: 0, xPercent: 5 }, { autoAlpha: 1, xPercent: 0, duration: .58, onStart: activate(".scene-lecture") }, 3.08)
