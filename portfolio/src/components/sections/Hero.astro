@@ -3,6 +3,7 @@ import CurvedLoop from '../react-bits/CurvedLoop';
 import NameLockup from '../NameLockup.astro';
 import HeroCta from '../HeroCta.astro';
 import OfferRail from '../OfferRail.astro';
+import HeroMetrics from '../HeroMetrics';
 import { site } from '../../content/site';
 ---
 
@@ -58,6 +59,8 @@ import { site } from '../../content/site';
             decoding="async"
           />
         </div>
+
+        <HeroMetrics client:visible />
       </figure>
     </div>
   </div>

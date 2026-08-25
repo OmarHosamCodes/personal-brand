@@ -14,6 +14,17 @@ export const site = {
   },
   /** Hero layout: C = centered lockup; portrait secondary (OD winner override) */
   heroLayout: 'C' as const,
+  /** Evidence-bounded hero telemetry — soft proof, not fabricated */
+  heroMetrics: [
+    { id: 'experience', value: '6+', label: 'Years Experience' },
+    { id: 'projects', value: '100+', label: 'Projects Shipped' },
+    {
+      id: 'consultation',
+      value: '70+',
+      label: 'Hours Consultation',
+      live: true,
+    },
+  ],
   cta: {
     primary: {
       label: 'Get in touch',
