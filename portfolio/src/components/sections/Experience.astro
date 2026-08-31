@@ -24,10 +24,20 @@ const isCurrentRole = (period: string) => period.toLowerCase() === 'present';
       >
         {site.experienceIntro}
       </p>
-      <div class="mt-8 flex items-center gap-3" aria-hidden="true">
-        <span class="bg-primary size-2.5 rounded-full"></span>
-        <span class="bg-border h-px w-16"></span>
-        <span class="font-label text-muted-foreground">Now broadcasting</span>
+      <div class="mt-8 flex flex-col gap-4">
+        <div class="flex items-center gap-3" aria-hidden="true">
+          <span class="bg-primary size-2.5 rounded-full"></span>
+          <span class="bg-border h-px w-16"></span>
+          <span class="font-label text-muted-foreground">Now broadcasting</span>
+        </div>
+        <p class="m-0 flex flex-col gap-1.5">
+          <span class="font-label text-muted-foreground">
+            {site.currentlyLearning.label}
+          </span>
+          <span class="text-foreground text-[15px] leading-[1.55]">
+            {site.currentlyLearning.topic}
+          </span>
+        </p>
       </div>
     </header>
 

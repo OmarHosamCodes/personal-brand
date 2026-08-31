@@ -15,6 +15,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 assert(site.heroLayout === 'C', 'heroLayout must be C');
 assert(site.title === 'Software Engineer', 'title must be Software Engineer');
 assert(site.projects.length >= 3, 'need at least 3 featured projects');
+assert(site.currentlyLearning.topic.length > 0, 'currentlyLearning topic required');
 assert(site.contact.email.includes('@'), 'email required');
 assert(site.contact.intents.length >= 3, 'contact intents required');
 assert(site.cta.primary.href === '#contact', 'primary CTA must link to contact form');

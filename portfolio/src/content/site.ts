@@ -108,6 +108,10 @@ export const site = {
     },
   ],
   experienceIntro: 'In-house and freelance roles shipping product.',
+  currentlyLearning: {
+    label: 'Currently learning',
+    topic: 'Psychology-based UX optimization',
+  },
   experience: [
     {
       role: 'Software Engineer',

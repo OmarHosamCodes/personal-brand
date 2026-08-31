@@ -85,6 +85,8 @@ ${projects}
 
 ${site.experienceIntro}
 
+Currently learning: ${site.currentlyLearning.topic}
+
 ${experience}
 
 ## Contact
